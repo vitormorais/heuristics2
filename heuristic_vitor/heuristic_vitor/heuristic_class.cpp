@@ -4,6 +4,7 @@
 
 heuristic_class::heuristic_class(void)
 {
+	newTT = new BASE_timetable;
 }
 
 
@@ -11,6 +12,11 @@ heuristic_class::~heuristic_class(void)
 {
 }
 
+void heuristic_class::generateBaseTT(std::ofstream &file)
+{
+	std::cout<<"starting TT"<<std::endl;
+	
+}
 
 void heuristic_class::printHelloWorld(std::ofstream &file)
 {
