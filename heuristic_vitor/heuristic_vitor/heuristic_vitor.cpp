@@ -24,9 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	heuristic = new heuristic_class();
 
-	heuristic->printHelloWorld(filetowrite);
-	heuristic->generateBaseTT(filetowrite);
-	heuristic->printTimeTable(filetowrite);
+	heuristic->runHeuristic1(filetowrite);
 
 
 	

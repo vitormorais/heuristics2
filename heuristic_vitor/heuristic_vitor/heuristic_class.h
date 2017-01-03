@@ -45,6 +45,32 @@ private:
 
 	BASE_timetable *newTT;
 
+	/*typedef struct{
+		timetable_element 
+	}selectedSubset;
+	*/
+
+	typedef struct{
+		timetable_element matrixOfTimes[5][8];
+		std::vector<timetable_element> selectElements;
+		bool selectedMissions[5];
+		int timeOfAGVs[8];
+		bool selectedAGVs[8];
+		int numberOfMissions;
+		int numberOfAGVs;
+	}solutionTimeT;
+
+	solutionTimeT *solutionTT;
+
+	//variables
+	int currTime;
+	int currIteration;
+
+	typedef struct{
+		int AGV;
+		int mission;
+	}minimumTime;
+	minimumTime *minimumTimeTT;
 
 public:
 	heuristic_class(void);
@@ -54,4 +80,14 @@ public:
 	void generateBaseTT(std::ofstream &file);
 	void addTimeElement(int robot, int mission, int initialTime, int totalTime);
 	void printTimeTable(std::ofstream &file);
+	//####
+	void solutionInitialSetup(std::ofstream &file);
+	void addTimeElementSolution(int robot, int mission, int initialTime, int totalTime);  //equal to timeElement but for solution
+	void printSolutionTable(std::ofstream &file);
+	//####
+	int getNextTime(std::ofstream &file);
+	int getRemainingMissions(void);
+	int getMinimumTime(void);
+	//####
+	void runHeuristic1(std::ofstream &file);
 };
