@@ -26,6 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	heuristic->printHelloWorld(filetowrite);
 	heuristic->generateBaseTT(filetowrite);
+	heuristic->printTimeTable(filetowrite);
 
 
 	

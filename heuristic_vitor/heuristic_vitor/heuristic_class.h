@@ -38,7 +38,9 @@ private:
 	}timetable_element;
 
 	typedef struct{
-		std::vector<timetable_element> time;
+		timetable_element matrixOfTimes[5][8];
+		int numberOfMissions;
+		int numberOfAGVs;
 	}BASE_timetable;
 
 	BASE_timetable *newTT;
@@ -50,5 +52,6 @@ public:
 
 	void printHelloWorld(std::ofstream &file);
 	void generateBaseTT(std::ofstream &file);
+	void addTimeElement(int robot, int mission, int initialTime, int totalTime);
+	void printTimeTable(std::ofstream &file);
 };
-
