@@ -83,11 +83,15 @@ public:
 	//####
 	void solutionInitialSetup(std::ofstream &file);
 	void addTimeElementSolution(int robot, int mission, int initialTime, int totalTime);  //equal to timeElement but for solution
+	void addTimeElementSolution2(int robot, int initialTime);  //for upcoming
 	void printSolutionTable(std::ofstream &file);
+	//void printSolutionTable2(std::ofstream &file);
 	//####
 	int getNextTime(std::ofstream &file);
 	int getRemainingMissions(void);
 	int getMinimumTime(void);
+	int selectTime(void);
+
 	//####
 	void runHeuristic1(std::ofstream &file);
 };
