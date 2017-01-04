@@ -122,6 +122,18 @@ void heuristic_class::printTimeTable(std::ofstream &file)
 
 //##########################################################
 
+int heuristic_class::teastarOffline(int id_robot, int vertex_origem, int vertex_destino)
+{
+	int mission = vertex_destino;
+
+	int robot_vertex = vertex_origem;
+	
+	//for(int agv=0; agv < (newTT->numberOfAGVs); agv++) //check which agv
+	//{
+		
+	//}
+	return newTT->matrixOfTimes[mission][id_robot].totalTime;
+}
 void heuristic_class::solutionInitialSetup(std::ofstream &file)
 {
 	
@@ -129,7 +141,7 @@ void heuristic_class::solutionInitialSetup(std::ofstream &file)
 	{
 		for(int mission=0; mission < newTT->numberOfMissions; mission++)
 		{
-			solutionTT->matrixOfTimes[mission][agv].totalTime = newTT->matrixOfTimes[mission][agv].totalTime;
+			solutionTT->matrixOfTimes[mission][agv].totalTime = teastarOffline(agv, 0, mission);
 			solutionTT->matrixOfTimes[mission][agv].agv.id_agv =  newTT->matrixOfTimes[mission][agv].agv.id_agv;
 			solutionTT->matrixOfTimes[mission][agv].agv.initial_time =  newTT->matrixOfTimes[mission][agv].agv.initial_time;
 			solutionTT->matrixOfTimes[mission][agv].mission =  newTT->matrixOfTimes[mission][agv].mission;
@@ -172,7 +184,7 @@ void heuristic_class::addTimeElementSolution2(int robot, int initialTime)
 
 	for(int mission=0; mission < newTT->numberOfMissions; mission++)
 		{
-			solutionTT->matrixOfTimes[mission][robot].totalTime = newTT->matrixOfTimes[mission][robot].totalTime + initialTime;
+			solutionTT->matrixOfTimes[mission][robot].totalTime = teastarOffline(robot, 0, mission) + initialTime;
 			solutionTT->matrixOfTimes[mission][robot].agv.id_agv =  newTT->matrixOfTimes[mission][robot].agv.id_agv;
 			solutionTT->matrixOfTimes[mission][robot].agv.initial_time =  initialTime;
 			solutionTT->matrixOfTimes[mission][robot].mission =  newTT->matrixOfTimes[mission][robot].mission;
@@ -282,25 +294,45 @@ int heuristic_class::selectTime(void)
 	return -1;
 }
 
+void heuristic_class::printResults(void)
+{
+	std::vector<timetable_element>::iterator it;
+	int i=0;
+
+	for(it=solutionTT->selectElements.begin() ; it < solutionTT->selectElements.end(); it++,i++ )
+	{
+		std::cout <<"\n   Iteration("<< i <<") M("<<it->mission<<") -  R("<<
+			it->agv.id_agv<<") --> t_ini = "<<it->agv.initial_time<<"  |  t_end = "<<it->totalTime;
+    }
+
+
+	return;
+}
 //##########################################################
 void heuristic_class::runHeuristic1(std::ofstream &file)
 {
-	printHelloWorld(file);
 	generateBaseTT(file);
 	printTimeTable(file);
 
+
 	
-	solutionInitialSetup(file);
+	solutionInitialSetup(file);  //incluir aqui o TEA*
 	printSolutionTable(file);
 
 
 	while(getRemainingMissions() >= 1)
 	{
 		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
-		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
+		
 		std::cout <<"\nMinimum time:"<< getMinimumTime();
-		selectTime();
+
+		selectTime();		//incluir aqui o TEA*
+		
 		printSolutionTable(file);
+
+		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
 	}
+
+	printResults();
 
 }

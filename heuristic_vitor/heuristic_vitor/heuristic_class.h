@@ -83,6 +83,7 @@ public:
 	void addTimeElement(int robot, int mission, int initialTime, int totalTime);
 	void printTimeTable(std::ofstream &file);
 	//####
+	int teastarOffline(int id_robot, int vertex_origem, int vertex_destino);
 	void solutionInitialSetup(std::ofstream &file);
 	void addTimeElementSolution(int robot, int mission, int initialTime, int totalTime);  //equal to timeElement but for solution
 	void addTimeElementSolution2(int robot, int initialTime);  //for upcoming
@@ -93,6 +94,7 @@ public:
 	int getRemainingMissions(void);
 	int getMinimumTime(void);
 	int selectTime(void);
+	void printResults(void);
 
 	//####
 	void runHeuristic1(std::ofstream &file);
