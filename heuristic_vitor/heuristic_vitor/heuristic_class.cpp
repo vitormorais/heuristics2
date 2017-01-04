@@ -12,7 +12,6 @@ heuristic_class::heuristic_class(void)
 	
 }
 
-
 heuristic_class::~heuristic_class(void)
 {
 }
@@ -23,7 +22,6 @@ void heuristic_class::printHelloWorld(std::ofstream &file)
 	file << "HELLO WORLD!!";
 	return;
 }
-
 void heuristic_class::generateBaseTT(std::ofstream &file)
 {
 	std::cout<<"povoar timetable"<<std::endl;
@@ -86,7 +84,6 @@ void heuristic_class::generateBaseTT(std::ofstream &file)
 	newTT->numberOfMissions = 5;
 	
 }
-
 void heuristic_class::addTimeElement(int robot, int mission, int initialTime, int totalTime)
 {
 	timetable_element time_elem;
@@ -98,7 +95,6 @@ void heuristic_class::addTimeElement(int robot, int mission, int initialTime, in
 
 	return;
 }
-
 void heuristic_class::printTimeTable(std::ofstream &file)
 {
 	std::cout<<"printing table"<<std::endl;
@@ -152,7 +148,7 @@ void heuristic_class::solutionInitialSetup(std::ofstream &file)
 	{
 		solutionTT->selectedAGVs[agv] = true;
 	}
-	for(int mission=0; mission<(solutionTT->numberOfMissions); mission++)
+	for(int mission=0; mission < solutionTT->numberOfMissions; mission++)
 	{
 		solutionTT->selectedMissions[mission] = false;
 	}
@@ -220,7 +216,7 @@ int heuristic_class::getNextTime(std::ofstream &file)
 	
 	//verifica de 0 até remaining missions se agv está livre
 	
-	for(int agv=0; agv<(solutionTT->numberOfAGVs + solutionTT->numberOfMissions - remainingMissions); agv++)
+	for(int agv=0; agv < (solutionTT->numberOfAGVs + solutionTT->numberOfMissions - remainingMissions); agv++)
 	{
 		if(solutionTT->selectedAGVs[agv]==true)
 		{
@@ -239,7 +235,7 @@ int heuristic_class::getRemainingMissions(void)
 {
 	int remainingMissions = solutionTT->numberOfMissions;
 	//conta o número de missões restantes
-	for(int mission=0; mission<solutionTT->numberOfMissions; mission++)
+	for(int mission=0; mission < solutionTT->numberOfMissions; mission++)
 	{
 		if(solutionTT->selectedMissions[mission] == true)
 		{
@@ -274,7 +270,7 @@ int heuristic_class::selectTime(void)
 	currIteration +=1;
 	solutionTT->selectedMissions[minimumTimeTT->mission]=true;
 	solutionTT->selectedAGVs[minimumTimeTT->AGV]=false;
-	solutionTT->selectedAGVs[solutionTT->numberOfAGVs+currIteration]=true;
+	solutionTT->selectedAGVs[solutionTT->numberOfAGVs+currIteration-1]=true;
 
 	solutionTT->selectElements.push_back(solutionTT->matrixOfTimes[minimumTimeTT->mission][minimumTimeTT->AGV]);
 	
@@ -297,47 +293,14 @@ void heuristic_class::runHeuristic1(std::ofstream &file)
 	solutionInitialSetup(file);
 	printSolutionTable(file);
 
-	std::cout <<"\n###########   Iteration 1   ###########\n";
 
-	std::cout <<"\nNext time:"<< getNextTime(file);
-
-	std::cout <<"\nMinimum time:"<< getMinimumTime();
-
-	selectTime();
-
-
-	printSolutionTable(file);
-
-	std::cout <<"\n###########   Iteration 2   ###########\n";
-
-	std::cout <<"\nNext time:"<< getNextTime(file);
-
-	std::cout <<"\nMinimum time:"<< getMinimumTime();
-
-	selectTime();
-
-
-	printSolutionTable(file);
-
-	std::cout <<"\n###########   Iteration 3   ###########\n";
-
-	std::cout <<"\nNext time:"<< getNextTime(file);
-	std::cout <<"\nMinimum time:"<< getMinimumTime();
-	selectTime();
-	printSolutionTable(file);
-
-	std::cout <<"\n###########   Iteration 4   ###########\n";
-
-	std::cout <<"\nNext time:"<< getNextTime(file);
-	std::cout <<"\nMinimum time:"<< getMinimumTime();
-	selectTime();
-	printSolutionTable(file);
-
-	std::cout <<"\n###########   Iteration 5   ###########\n";
-
-	std::cout <<"\nNext time:"<< getNextTime(file);
-	std::cout <<"\nMinimum time:"<< getMinimumTime();
-	selectTime();
-	printSolutionTable(file);
+	while(getRemainingMissions() >= 1)
+	{
+		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
+		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
+		std::cout <<"\nMinimum time:"<< getMinimumTime();
+		selectTime();
+		printSolutionTable(file);
+	}
 
 }

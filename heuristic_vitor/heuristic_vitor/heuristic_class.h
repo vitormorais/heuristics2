@@ -11,16 +11,18 @@ class heuristic_class
 private:
 	typedef struct{
 	int id_mission;
-	int x_position;
-	int y_position;
-	int theta;
+	//int x_position;
+	//int y_position;
+	//int theta;
+	int m_vertex;
 	} Mission;
 
 	typedef struct{
 	int id_robot;
-	int x_position;
-	int y_position;
-	int theta;
+	//int x_position;
+	//int y_position;
+	//int theta;
+	int r_vertex;
 	} Robot;
 
 	typedef struct{
