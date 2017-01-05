@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+file(GLOB PROGRAM_HEADERS RELATIVE ${PROJECT_SOURCE_DIR} "include/${PROJECT_NAME}/*.h")
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -101,8 +103,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that xdependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES teastar_heuristic
+ INCLUDE_DIRS include
+ LIBRARIES ${PROJECT_NAME}
 #  CATKIN_DEPENDS roscpp rospy std_msgs teastar_msgs
 #  DEPENDS system_lib
 )
@@ -115,6 +117,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+    include
   ${catkin_INCLUDE_DIRS}
 )
 

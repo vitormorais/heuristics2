@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "heuristic_class.h"
 
-
+// Constructor
 heuristic_class::heuristic_class(void)
 {
 	newTT = new BASE_timetable;
@@ -9,12 +9,15 @@ heuristic_class::heuristic_class(void)
 	minimumTimeTT = new minimumTime;
 	minimumTimeTT->AGV=0;
 	minimumTimeTT->mission=0;
-	
+
 }
 
+// Destructor
 heuristic_class::~heuristic_class(void)
 {
 }
+
+// ############### FAKE TIME TABLE #########################
 
 void heuristic_class::printHelloWorld(std::ofstream &file)
 {
@@ -31,7 +34,7 @@ void heuristic_class::generateBaseTT(void)
 	addTimeElement(0,2,0,6);
 	addTimeElement(0,3,0,6);
 	addTimeElement(0,4,0,5);
-	
+
 	addTimeElement(1,0,0,4);
 	addTimeElement(1,1,0,8);
 	addTimeElement(1,2,0,9);
@@ -44,10 +47,10 @@ void heuristic_class::generateBaseTT(void)
 	addTimeElement(2,3,0,7);
 	addTimeElement(2,4,0,9);
 
-	
+
 
 	//agora tmepos entre Mx's
-	//esta parte será feita para a função TEA* "aceder"
+	//esta parte serï¿½ feita para a funï¿½ï¿½o TEA* "aceder"
 
 	addTimeElement(3,0,0,4);
 	addTimeElement(3,1,0,8);
@@ -78,11 +81,11 @@ void heuristic_class::generateBaseTT(void)
 	addTimeElement(7,2,0,9);
 	addTimeElement(7,3,0,5);
 	addTimeElement(7,4,0,11);
-	
-	
+
+
 	newTT->numberOfAGVs = 3;
 	newTT->numberOfMissions = 5;
-	
+
 }
 void heuristic_class::addTimeElement(int robot, int mission, int initialTime, int totalTime)
 {
@@ -127,16 +130,16 @@ int heuristic_class::teastarOffline(int id_robot, int vertex_origem, int vertex_
 	int mission = vertex_destino;
 
 	int robot_vertex = vertex_origem;
-	
+
 	//for(int agv=0; agv < (newTT->numberOfAGVs); agv++) //check which agv
 	//{
-		
+
 	//}
 	return newTT->matrixOfTimes[mission][id_robot].totalTime;
 }
 void heuristic_class::solutionInitialSetup(void)
 {
-	
+
 	for(int agv=0; agv < (newTT->numberOfAGVs); agv++)
 	{
 		for(int mission=0; mission < newTT->numberOfMissions; mission++)
@@ -189,7 +192,7 @@ void heuristic_class::addTimeElementSolution2(int robot, int initialTime)
 			solutionTT->matrixOfTimes[mission][robot].agv.initial_time =  initialTime;
 			solutionTT->matrixOfTimes[mission][robot].mission =  newTT->matrixOfTimes[mission][robot].mission;
 		}
-	
+
 	return;
 }
 void heuristic_class::printSolutionTable(void)
@@ -231,14 +234,14 @@ int heuristic_class::getNextTime(void)
 	int remainingMissions = this->getRemainingMissions();
 	int nextTime = 10000000;
 
-	
-	//verifica de 0 até remaining missions se agv está livre
-	
+
+	//verifica de 0 atï¿½ remaining missions se agv estï¿½ livre
+
 	for(int agv=0; agv < (solutionTT->numberOfAGVs + solutionTT->numberOfMissions - remainingMissions); agv++)
 	{
 		if(solutionTT->selectedAGVs[agv]==true)
 		{
-			//verifica mínimo de AGV.initialTime
+			//verifica mï¿½nimo de AGV.initialTime
 			if(solutionTT->timeOfAGVs[agv] < nextTime)
 			 nextTime = solutionTT->timeOfAGVs[agv];
 		}
@@ -252,7 +255,7 @@ int heuristic_class::getNextTime(void)
 int heuristic_class::getRemainingMissions(void)
 {
 	int remainingMissions = solutionTT->numberOfMissions;
-	//conta o número de missões restantes
+	//conta o nï¿½mero de missï¿½es restantes
 	for(int mission=0; mission < solutionTT->numberOfMissions; mission++)
 	{
 		if(solutionTT->selectedMissions[mission] == true)
@@ -345,14 +348,14 @@ void heuristic_class::updateMinimumTime(void)
 }
 int heuristic_class::selectTime(void)
 {
-	
+
 	currIteration +=1;
 	solutionTT->selectedMissions[minimumTimeTT->mission]=true;
 	solutionTT->selectedAGVs[minimumTimeTT->AGV]=false;
 	solutionTT->selectedAGVs[solutionTT->numberOfAGVs+currIteration-1]=true;
 
 	solutionTT->selectElements.push_back(solutionTT->matrixOfTimes[minimumTimeTT->mission][minimumTimeTT->AGV]);
-	
+
 	int timeOfExecution = solutionTT->matrixOfTimes[minimumTimeTT->mission][minimumTimeTT->AGV].totalTime;
 	//std::cout <<"\nMinimum time AGV:"<< minimumTimeTT->AGV;
 	//std::cout <<"\nMinimum time mission:"<< minimumTimeTT->mission;
@@ -382,7 +385,7 @@ void heuristic_class::runHeuristic1(void)
 	printTimeTable();
 
 
-	
+
 	solutionInitialSetup();  //incluir aqui o TEA*
 	printSolutionTable();
 
@@ -393,12 +396,12 @@ void heuristic_class::runHeuristic1(void)
 		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
 		updateMinimumTime();
 
-		//std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos mínimos
-		std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o máximo do conjunto dos mínimos
+		//std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos mï¿½nimos
+		std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o mï¿½ximo do conjunto dos mï¿½nimos
 
 		selectTime();		//incluir aqui o TEA*
-		
-		
+
+
 		printSolutionTable();
 
 		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
