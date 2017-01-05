@@ -56,6 +56,8 @@ private:
 		timetable_element matrixOfTimes[5][8];
 		std::vector<timetable_element> selectElements;
 		bool selectedMissions[5];
+		int minimumTimeMissions[5];
+		int minimumTimeAGV[5];
 		int timeOfAGVs[8];
 		bool selectedAGVs[8];
 		int numberOfMissions;
@@ -79,23 +81,26 @@ public:
 	~heuristic_class(void);
 
 	void printHelloWorld(std::ofstream &file);
-	void generateBaseTT(std::ofstream &file);
+	void generateBaseTT(void);
 	void addTimeElement(int robot, int mission, int initialTime, int totalTime);
-	void printTimeTable(std::ofstream &file);
+	void printTimeTable(void);
 	//####
 	int teastarOffline(int id_robot, int vertex_origem, int vertex_destino);
-	void solutionInitialSetup(std::ofstream &file);
+	void solutionInitialSetup(void);
 	void addTimeElementSolution(int robot, int mission, int initialTime, int totalTime);  //equal to timeElement but for solution
 	void addTimeElementSolution2(int robot, int initialTime);  //for upcoming
-	void printSolutionTable(std::ofstream &file);
-	//void printSolutionTable2(std::ofstream &file);
+	void printSolutionTable(void);
+	//void printSolutionTable2(void);
 	//####
-	int getNextTime(std::ofstream &file);
+	int getNextTime(void);
 	int getRemainingMissions(void);
 	int getMinimumTime(void);
+	int getMaximumTime(void);
+	void updateMinimumTime(void);
 	int selectTime(void);
+
 	void printResults(void);
 
 	//####
-	void runHeuristic1(std::ofstream &file);
+	void runHeuristic1(void);
 };

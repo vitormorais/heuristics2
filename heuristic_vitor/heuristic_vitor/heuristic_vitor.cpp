@@ -14,22 +14,22 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	
-	std::ofstream filetowrite;
+	//std::ofstream filetowrite;
 
 	
-	filetowrite.open("..\\HEURISTIC.txt", std::ios_base::app);
-	filetowrite << "########  V1  #######\n";
+	//filetowrite.open("..\\HEURISTIC.txt", std::ios_base::app);
+	//filetowrite << "########  V1  #######\n";
 
 	heuristic_class *heuristic;
 
 	heuristic = new heuristic_class();
 
-	heuristic->runHeuristic1(filetowrite);
+	heuristic->runHeuristic1();
 
 
 	
 	delete heuristic;
-	filetowrite.close();
+	//filetowrite.close();
 
 	std::cout<<"\n\nend\npress any key to exit"<<std::endl;
 	getchar();
