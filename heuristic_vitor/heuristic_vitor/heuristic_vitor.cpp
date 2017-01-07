@@ -24,6 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	heuristic = new heuristic_class();
 
+	//heuristic->runHeuristic1();
 	heuristic->runHeuristic1();
 
 

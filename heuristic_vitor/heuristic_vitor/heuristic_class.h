@@ -5,97 +5,83 @@
 #include <vector>
 #include <fstream>
 
+#define NUM_ROBOTS 3
+#define NUM_MISSIONS 5
+//int const NUM_ROBOTS = 3;
+//int const NUM_MISSIONS = 5;
+
+//////////////////////////////////////////////
+
+typedef struct{
+    int id;
+    int vertex;
+}robot;
+
+typedef struct{
+    int id;
+    int vertex;
+}mission;
+
+typedef struct{
+    int robot;
+    int mission;
+    float initial_time;
+    float mission_time;
+}element;
+
+typedef struct{
+    element matrixOfElements[NUM_MISSIONS][NUM_ROBOTS+NUM_MISSIONS];
+	std::vector<element> selectElements;
+	
+	bool selectedMissions[NUM_MISSIONS];
+	float minimumTimeMissions[NUM_MISSIONS];	//array com o tempo mínimo 
+	int minimumTimeAGV[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
+	int timeOfAGVs[NUM_MISSIONS+NUM_ROBOTS];
+	bool selectedAGVs[NUM_MISSIONS+NUM_ROBOTS];
+	
+}solution;
+
 
 class heuristic_class
 {
 private:
-	typedef struct{
-	int id_mission;
-	//int x_position;
-	//int y_position;
-	//int theta;
-	int m_vertex;
-	} Mission;
 
-	typedef struct{
-	int id_robot;
-	//int x_position;
-	//int y_position;
-	//int theta;
-	int r_vertex;
-	} Robot;
+    // int NUM_ROBOTS = 3;
+    // int NUM_MISSIONS = 5;
 
-	typedef struct{
-	int id_agv;
-	//Robot robot;   //comentado, o robot aqpenas é identifacdo com um número
-	int initial_time;
-	} AGV;
+    std::vector<robot> l_robots;
+    std::vector<mission> l_missions;
+    solution initial_solution;
 
-	typedef struct{
-		//Mission Mx;  // a missão apenas é identificada com um número nesta fase
-		//AGV AGVx;
-		int mission;
-		AGV agv;
-		int totalTime;    //este número será gerado pelo TEA*, que analiza a (Mission Mx, AGV AGVx)
-	}timetable_element;
+	float offlineTime;
+	element selectedElement;
 
-	typedef struct{
-		timetable_element matrixOfTimes[5][8];
-		int numberOfMissions;
-		int numberOfAGVs;
-	}BASE_timetable;
-
-	BASE_timetable *newTT;
-
-	/*typedef struct{
-		timetable_element 
-	}selectedSubset;
-	*/
-
-	typedef struct{
-		timetable_element matrixOfTimes[5][8];
-		std::vector<timetable_element> selectElements;
-		bool selectedMissions[5];
-		int minimumTimeMissions[5];
-		int minimumTimeAGV[5];
-		int timeOfAGVs[8];
-		bool selectedAGVs[8];
-		int numberOfMissions;
-		int numberOfAGVs;
-	}solutionTimeT;
-
-	solutionTimeT *solutionTT;
-
-	//variables
-	int currTime;
 	int currIteration;
 
-	typedef struct{
-		int AGV;
-		int mission;
-	}minimumTime;
-	minimumTime *minimumTimeTT;
 
 public:
 	heuristic_class(void);
 	~heuristic_class(void);
 
-	void printHelloWorld(std::ofstream &file);
-	void generateBaseTT(void);
-	void addTimeElement(int robot, int mission, int initialTime, int totalTime);
-	void printTimeTable(void);
-	//####
-	int teastarOffline(int id_robot, int vertex_origem, int vertex_destino);
-	void solutionInitialSetup(void);
-	void addTimeElementSolution(int robot, int mission, int initialTime, int totalTime);  //equal to timeElement but for solution
-	void addTimeElementSolution2(int robot, int initialTime);  //for upcoming
-	void printSolutionTable(void);
-	//void printSolutionTable2(void);
-	//####
+	
+
+	//float getTEAstarOnline(int robot, int vertex_origin, int vertex_end);
+	float getTEAstarOffline(int robot, int vertex_origin, int vertex_end);
+    void initializeListOfRobots(void);
+    void initializeListOfMissions(void);
+    void solutionInitialSetup(void);
+    void printSolutionTable(void);
 	int getNextTime(void);
+	void addElementAtEnd(int end_position, float mission_time);
+
+
+
+
+
+
 	int getRemainingMissions(void);
-	int getMinimumTime(void);
-	int getMaximumTime(void);
+	float getMinimumTime(void);
+//	int getMaximumTime(void);
 	void updateMinimumTime(void);
 	int selectTime(void);
 
