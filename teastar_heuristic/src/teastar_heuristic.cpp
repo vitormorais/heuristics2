@@ -11,10 +11,12 @@ int main(int argc, char **argv)
 
     heuristic_class teastar_heuristic;
 
-    teastar_heuristic.solutionInitialSetup();
+    // teastar_heuristic.solutionInitialSetup();
+    //
+    // teastar_heuristic.printSolutionTable();
 
-    teastar_heuristic.printSolutionTable();
 
+    teastar_heuristic.runHeuristic1();
 
     // ROS_INFO_STREAM("[TEA* Heuristic] [AGV " << agv <<"] Time between Vertex " << vertex_origin << " and Vertex " << vertex_end << ": " << sum_time);
 

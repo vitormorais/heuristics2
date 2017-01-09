@@ -28,13 +28,14 @@ typedef struct{
 typedef struct{
     element matrixOfElements[NUM_MISSIONS][NUM_ROBOTS+NUM_MISSIONS];
 	std::vector<element> selectElements;
-	
+
 	bool selectedMissions[NUM_MISSIONS];
-	float minimumTimeMissions[NUM_MISSIONS];	//array com o tempo mínimo 
+	bool selectedRobots[NUM_MISSIONS+NUM_ROBOTS];
+
+	float minimumTimeMissions[NUM_MISSIONS];	//array com o tempo mínimo
 	int minimumTimeAGV[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
-	int timeOfAGVs[NUM_MISSIONS+NUM_ROBOTS];
-	bool selectedAGVs[NUM_MISSIONS+NUM_ROBOTS];
-	
+	int timeOfAGVs[NUM_MISSIONS+NUM_ROBOTS];    // TODO: Erase this variable!!!
+
 }solution;
 
 
@@ -65,7 +66,7 @@ public:
 	heuristic_class(void);
 	~heuristic_class(void);
 
-	
+
 
 	//float getTEAstarOnline(int robot, int vertex_origin, int vertex_end);
 	float getTEAstarOffline(int robot, int vertex_origin, int vertex_end);
@@ -193,11 +194,11 @@ void heuristic_class::solutionInitialSetup(void) {
 	for(int r=0; r < (l_robots.size() + l_missions.size()); r++)
 	{
 		initial_solution.timeOfAGVs[r] = 0;
-		initial_solution.selectedAGVs[r] = false;
+		initial_solution.selectedRobots[r] = false;
 	}
 	for(int r=0; r < l_robots.size(); r++)
 	{
-		initial_solution.selectedAGVs[r] = true;
+		initial_solution.selectedRobots[r] = true;
 	}
 	for(int m=0; m < l_missions.size(); m++)
 	{
@@ -207,7 +208,7 @@ void heuristic_class::solutionInitialSetup(void) {
 }
 
 float heuristic_class::getTEAstarOffline(int robot, int vertex_origin, int vertex_end) {
-	
+
 	offlineTime +=1;
 	return offlineTime;
 }
@@ -268,17 +269,14 @@ void heuristic_class::printSolutionTable(void) {
 
 }
 
-int heuristic_class::getRemainingMissions(void)
-{
-	int remainingMissions = l_missions.size();
-	remainingMissions -= initial_solution.selectElements.size();
+int heuristic_class::getRemainingMissions(void) {
+	int remainingMissions = l_missions.size() - initial_solution.selectElements.size();
 	return remainingMissions;
 }
 
-float heuristic_class::getMaximumTime(void)
-{
+float heuristic_class::getMaximumTime(void) {
 	float maximumTime = 0;
-	
+
 
 	for(int m=0; m < l_missions.size()  + 1; m++)
 	{
@@ -295,10 +293,9 @@ float heuristic_class::getMaximumTime(void)
 	return maximumTime;
 }
 
-float heuristic_class::getMinimumTime(void)
-{
+float heuristic_class::getMinimumTime(void) {
 	float minimumTime = 100000;
-	
+
 
 	for(int m=0; m < l_missions.size()  + 1; m++)
 	{
@@ -315,19 +312,18 @@ float heuristic_class::getMinimumTime(void)
 	return minimumTime;
 }
 
-void heuristic_class::updateMinimumTime(void)
-{
-	for(int m=0; m < l_missions.size()  + 1; m++)
+void heuristic_class::updateMinimumTime(void) {
+	for(int m=0; m < l_missions.size()  + 1; m++) // TODO: The "+1" can be a bug...
 	{
 		initial_solution.minimumTimeMissions[m] = 10000;
-		initial_solution.minimumTimeAGV[m] = 0;
+		initial_solution.minimumTimeAGV[m] = 0; // TODO: This can be dangerous...
 	}
 
-	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++)
+	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++) // TODO: The "+1" can be a bug...
 	{
-		for(int m=0; m < l_missions.size()  + 1; m++)
+		for(int m=0; m < l_missions.size()  + 1; m++) // TODO: The "+1" can be a bug...
 		{
-			if(initial_solution.selectedAGVs[r] && !initial_solution.selectedMissions[m] && initial_solution.matrixOfElements[m][r].mission_time < initial_solution.minimumTimeMissions[m])
+			if(initial_solution.selectedRobots[r] && !initial_solution.selectedMissions[m] && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.minimumTimeMissions[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
 			{
 				initial_solution.minimumTimeMissions[m] = initial_solution.matrixOfElements[m][r].mission_time;
 				initial_solution.minimumTimeAGV[m] = r;
@@ -335,17 +331,17 @@ void heuristic_class::updateMinimumTime(void)
 		}
 	}
 }
-int heuristic_class::selectTime(void)
-{
+
+int heuristic_class::selectTime(void) {
 
 	initial_solution.selectedMissions[selectedElement.mission]=true;
-	initial_solution.selectedAGVs[selectedElement.robot]=false;
-	initial_solution.selectedAGVs[l_robots.size()+currIteration-1]=true;
+	initial_solution.selectedRobots[selectedElement.robot]=false;
+	initial_solution.selectedRobots[l_robots.size()+currIteration-1]=true;
 
 	initial_solution.selectElements.push_back(selectedElement);
 
 	float timeOfExecution = initial_solution.matrixOfElements[selectedElement.mission][selectedElement.robot].mission_time;
-	
+
 	addElementAtEnd(l_robots.size()+currIteration-1, timeOfExecution); //igual ao TEA*
 
 	return -1;
@@ -365,7 +361,7 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
             element e;
             e.robot = selectedElement.robot;
             e.mission = m;
-            e.initial_time = mission_time;
+            e.initial_time = mission_time; // TODO: Initial time = initital time (do anterior) + mission time (do anterior)
             e.mission_time = sum_time;// + mission_time;
 
             initial_solution.matrixOfElements[m][end_position+1] = e;
@@ -391,7 +387,7 @@ void heuristic_class::printResults(void)
 }
 void heuristic_class::printMinimumArray(void)
 {
-	
+
 	std::cout << "\n   Min time" << std::endl;
 	for(int m=0; m < l_missions.size(); m++)
 	{
@@ -404,15 +400,13 @@ void heuristic_class::printMinimumArray(void)
 //##########################################################
 void heuristic_class::runHeuristic1(void)
 {
-	
+
 	solutionInitialSetup();  //incluir aqui o TEA*
 	printSolutionTable();
 
-
-
 	while(getRemainingMissions() >= 1)
 	{
-		
+
 		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
 		updateMinimumTime();
 
