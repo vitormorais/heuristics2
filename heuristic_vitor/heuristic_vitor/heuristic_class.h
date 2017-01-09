@@ -81,11 +81,12 @@ public:
 
 	int getRemainingMissions(void);
 	float getMinimumTime(void);
-//	int getMaximumTime(void);
+	float getMaximumTime(void);
 	void updateMinimumTime(void);
 	int selectTime(void);
 
 	void printResults(void);
+	void printMinimumArray(void);
 
 	//####
 	void runHeuristic1(void);
