@@ -157,7 +157,6 @@ void heuristic_class::solutionInitialSetup(void) {
 
 	for(int r=0; r < (l_robots.size() + l_missions.size()); r++)
 	{
-		initial_solution.timeOfAGVs[r] = 0;
 		initial_solution.selectedRobots[r] = SELECTED;//= true;
 	}
 	for(int r=0; r < l_robots.size(); r++)
@@ -173,12 +172,12 @@ void heuristic_class::solutionInitialSetup(void) {
 
 float heuristic_class::getTEAstarOffline(int robot, int vertex_origin, int vertex_end) {
 	
-	if(robot  <  (NUM_ROBOTS)){  //TODO::avaliar o porquê de precisar de -1
+	if(robot  <  (NUM_ROBOTS)) {  //TODO::avaliar o porquê de precisar de -1
 		return MATRIX_TIMES_OFFLINE[vertex_end][robot];
 	}
-	else{
+	else {
 
-		return MATRIX_TIMES_OFFLINE[vertex_end][robot-NUM_ROBOTS] + selectedElement.mission_time;
+		return MATRIX_TIMES_OFFLINE[vertex_end][robot-NUM_ROBOTS];// + selectedElement.mission_time;
 	}
 }
 /*
@@ -249,13 +248,13 @@ float heuristic_class::getMaximumTime(void) {
 
 	for(int m=0; m < l_missions.size()  + 1; m++)
 	{
-		if(initial_solution.minimumTimeMissions[m] > maximumTime && missionIsSelectable(m))
+		if(initial_solution.l_min_time_miss_value[m] > maximumTime && missionIsSelectable(m))
 		{
-			selectedElement.robot = initial_solution.minimumTimeAGV[m];
+			selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
 			selectedElement.mission=m;
 			selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
 			selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-			maximumTime = initial_solution.minimumTimeMissions[m];
+			maximumTime = initial_solution.l_min_time_miss_value[m];
 		}
 	}
 
@@ -268,13 +267,13 @@ float heuristic_class::getMinimumTime(void) {
 
 	for(int m=0; m < l_missions.size(); m++)
 	{
-		if(initial_solution.minimumTimeMissions[m] < minimumTime && missionIsSelectable(m))
+		if(initial_solution.l_min_time_miss_value[m] < minimumTime && missionIsSelectable(m))
 		{
-			selectedElement.robot = initial_solution.minimumTimeAGV[m];
+			selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
 			selectedElement.mission=m;
 			selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
 			selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-			minimumTime = initial_solution.minimumTimeMissions[m];
+			minimumTime = initial_solution.l_min_time_miss_value[m];
 		}
 	}
 
@@ -284,18 +283,18 @@ float heuristic_class::getMinimumTime(void) {
 void heuristic_class::updateMinimumTime(void) {
 	for(int m=0; m < l_missions.size(); m++) // TODO: The "+1" can be a bug...
 	{
-		initial_solution.minimumTimeMissions[m] = 10000;
-		initial_solution.minimumTimeAGV[m] = 0;
+		initial_solution.l_min_time_miss_value[m] = 10000;
+		initial_solution.l_min_time_miss_robot[m] = 0;
 	}
 
 	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++)
 	{
 		for(int m=0; m < l_missions.size(); m++)
 		{
-			if(robotIsSelectable(r) && missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.minimumTimeMissions[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+			if(robotIsSelectable(r) && missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.l_min_time_miss_value[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
 			{
-				initial_solution.minimumTimeMissions[m] = initial_solution.matrixOfElements[m][r].mission_time;
-				initial_solution.minimumTimeAGV[m] = r;
+				initial_solution.l_min_time_miss_value[m] = initial_solution.matrixOfElements[m][r].mission_time;
+				initial_solution.l_min_time_miss_robot[m] = r;
 			}
 		}
 	}
@@ -359,7 +358,7 @@ void heuristic_class::printMinimumArray(void) {
 	std::cout << "\n   Min time" << std::endl;
 	for(int m=0; m < l_missions.size(); m++)
 	{
-		std::cout <<"M" << m << ": " << initial_solution.minimumTimeMissions[m] << "st:" <<initial_solution.selectedMissions[m] <<"  | ";
+		std::cout <<"M" << m << ": " << initial_solution.l_min_time_miss_value[m] << "st:" <<initial_solution.selectedMissions[m] <<"  | ";
     }
 
 

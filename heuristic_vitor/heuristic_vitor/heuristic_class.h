@@ -57,9 +57,11 @@ typedef struct{
 	bool selectedMissions[NUM_MISSIONS];
 	bool selectedRobots[NUM_MISSIONS+NUM_ROBOTS];
 
-	float minimumTimeMissions[NUM_MISSIONS];	//array com o tempo mínimo
-	int minimumTimeAGV[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
-	int timeOfAGVs[NUM_MISSIONS+NUM_ROBOTS];    // TODO: Erase this variable!!!
+	float l_min_time_miss_value[NUM_MISSIONS];	//array com o tempo mínimo
+	int l_min_time_miss_robot[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
+
+	float l_max_time_miss_value[NUM_MISSIONS];	//array com o tempo mínimo
+	int l_max_time_miss_robot[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
 
 }solution;
 
