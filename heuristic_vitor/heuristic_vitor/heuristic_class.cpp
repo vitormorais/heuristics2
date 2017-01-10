@@ -21,6 +21,18 @@ heuristic_class::heuristic_class(void) {
 // Destructor
 heuristic_class::~heuristic_class(void) {}
 
+
+/*
+// ROS Configuration Setup
+void heuristic_class::setupConfigurationFromParameterServer(ros::NodeHandlePtr& node_handle) {
+
+    // NodeHandle
+    node_handle_ = node_handle;
+
+    // ROS Services
+    client_ = node_handle_->serviceClient<teastar_msgs::GetTEAstarTime>("get_teastar_time");
+
+}*/
 void heuristic_class::initializeListOfRobots(void) {
 
     robot r0;
@@ -29,15 +41,25 @@ void heuristic_class::initializeListOfRobots(void) {
 
     robot r1;
     r1.id = 1;
-    r1.vertex = 7;
+    r1.vertex = 795;
 
     robot r2;
     r2.id = 2;
-    r2.vertex = 7;
+    r2.vertex = 104;
+
+    robot r3;
+    r3.id = 3;
+    r3.vertex = 792;
+
+    robot r4;
+    r4.id = 4;
+    r4.vertex = 119;
 
     l_robots.push_back(r0);
     l_robots.push_back(r1);
     l_robots.push_back(r2);
+    l_robots.push_back(r3);
+    l_robots.push_back(r4);
 
 }
 
@@ -45,7 +67,7 @@ void heuristic_class::initializeListOfMissions(void) {
 
     mission m0;
     m0.id = 0;
-    m0.vertex = 71;
+    m0.vertex = 74;
 
     mission m1;
     m1.id = 1;
@@ -53,21 +75,41 @@ void heuristic_class::initializeListOfMissions(void) {
 
     mission m2;
     m2.id = 2;
-    m2.vertex = 71;
+    m2.vertex = 693;
 
 	mission m3;
-    m2.id = 3;
-    m2.vertex = 71;
+    m3.id = 3;
+    m3.vertex = 699;
 
 	mission m4;
-    m2.id = 4;
-    m2.vertex = 71;
+    m4.id = 4;
+    m4.vertex = 530;
+
+    mission m5;
+    m5.id = 5;
+    m5.vertex = 536;
+
+    mission m6;
+    m6.id = 6;
+    m6.vertex = 545;
+
+    mission m7;
+    m7.id = 7;
+    m7.vertex = 554;
+
+    mission m8;
+    m8.id = 8;
+    m8.vertex = 747;
 
     l_missions.push_back(m0);
     l_missions.push_back(m1);
     l_missions.push_back(m2);
 	l_missions.push_back(m3);
 	l_missions.push_back(m4);
+	l_missions.push_back(m5);
+    l_missions.push_back(m6);
+    l_missions.push_back(m7);
+    l_missions.push_back(m8);
 
 }
 
@@ -83,7 +125,7 @@ void heuristic_class::solutionInitialSetup(void) {
             int vertex_end = l_missions[m].vertex;
 
            // float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
-			 float sum_time = getTEAstarOffline(robot_id, vertex_origin, vertex_end);
+			 float sum_time = getTEAstarOffline(r, vertex_origin, m);
 
             element e;
             e.robot = l_robots[r].id;;
@@ -101,11 +143,11 @@ void heuristic_class::solutionInitialSetup(void) {
 	for(int r=0; r < (l_robots.size() + l_missions.size()); r++)
 	{
 		initial_solution.timeOfAGVs[r] = 0;
-		initial_solution.selectedAGVs[r] = false;
+		initial_solution.selectedRobots[r] = false;
 	}
 	for(int r=0; r < l_robots.size(); r++)
 	{
-		initial_solution.selectedAGVs[r] = true;
+		initial_solution.selectedRobots[r] = true;
 	}
 	for(int m=0; m < l_missions.size(); m++)
 	{
@@ -116,8 +158,13 @@ void heuristic_class::solutionInitialSetup(void) {
 
 float heuristic_class::getTEAstarOffline(int robot, int vertex_origin, int vertex_end) {
 	
-	offlineTime +=1;
-	return offlineTime;
+	if(robot  <  (NUM_ROBOTS)){  //TODO::avaliar o porquê de precisar de -1
+		return MATRIX_TIMES_OFFLINE[vertex_end][robot];
+	}
+	else{
+
+		return MATRIX_TIMES_OFFLINE[vertex_end][robot-NUM_ROBOTS] + selectedElement.mission_time;
+	}
 }
 /*
 float heuristic_class::getTEAstarOnline(int robot, int vertex_origin, int vertex_end) {
@@ -164,7 +211,7 @@ void heuristic_class::printSolutionTable(void) {
 
         for(int m=0; m < l_missions.size(); m++) {
 
-			std::cout<<" "<< initial_solution.matrixOfElements[m][r].initial_time <<"->"<<initial_solution.matrixOfElements[m][r].mission_time<<" | ";
+			std::cout << "    " << ceil(initial_solution.matrixOfElements[m][r].mission_time) << "    |";
 
 		}
 
@@ -176,15 +223,12 @@ void heuristic_class::printSolutionTable(void) {
 
 }
 
-int heuristic_class::getRemainingMissions(void)
-{
-	int remainingMissions = l_missions.size();
-	remainingMissions -= initial_solution.selectElements.size();
+int heuristic_class::getRemainingMissions(void) {
+	int remainingMissions = l_missions.size() - initial_solution.selectElements.size();
 	return remainingMissions;
 }
 
-float heuristic_class::getMaximumTime(void)
-{
+float heuristic_class::getMaximumTime(void) {
 	float maximumTime = 0;
 	
 
@@ -203,12 +247,11 @@ float heuristic_class::getMaximumTime(void)
 	return maximumTime;
 }
 
-float heuristic_class::getMinimumTime(void)
-{
+float heuristic_class::getMinimumTime(void) {
 	float minimumTime = 100000;
-	
 
-	for(int m=0; m < l_missions.size()  + 1; m++)
+
+	for(int m=0; m < l_missions.size(); m++)
 	{
 		if(initial_solution.minimumTimeMissions[m] < minimumTime && !initial_solution.selectedMissions[m])
 		{
@@ -223,9 +266,8 @@ float heuristic_class::getMinimumTime(void)
 	return minimumTime;
 }
 
-void heuristic_class::updateMinimumTime(void)
-{
-	for(int m=0; m < l_missions.size()  + 1; m++)
+void heuristic_class::updateMinimumTime(void) {
+	for(int m=0; m < l_missions.size(); m++) // TODO: The "+1" can be a bug...
 	{
 		initial_solution.minimumTimeMissions[m] = 10000;
 		initial_solution.minimumTimeAGV[m] = 0;
@@ -233,9 +275,9 @@ void heuristic_class::updateMinimumTime(void)
 
 	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++)
 	{
-		for(int m=0; m < l_missions.size()  + 1; m++)
+		for(int m=0; m < l_missions.size(); m++)
 		{
-			if(initial_solution.selectedAGVs[r] && !initial_solution.selectedMissions[m] && initial_solution.matrixOfElements[m][r].mission_time < initial_solution.minimumTimeMissions[m])
+			if(initial_solution.selectedRobots[r] && !initial_solution.selectedMissions[m] && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.minimumTimeMissions[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
 			{
 				initial_solution.minimumTimeMissions[m] = initial_solution.matrixOfElements[m][r].mission_time;
 				initial_solution.minimumTimeAGV[m] = r;
@@ -243,17 +285,17 @@ void heuristic_class::updateMinimumTime(void)
 		}
 	}
 }
-int heuristic_class::selectTime(void)
-{
+
+int heuristic_class::selectTime(void) {
 
 	initial_solution.selectedMissions[selectedElement.mission]=true;
-	initial_solution.selectedAGVs[selectedElement.robot]=false;
-	initial_solution.selectedAGVs[l_robots.size()+currIteration-1]=true;
+	initial_solution.selectedRobots[selectedElement.robot]=false;
+	initial_solution.selectedRobots[l_robots.size()+currIteration-1]=true;
 
 	initial_solution.selectElements.push_back(selectedElement);
 
 	float timeOfExecution = initial_solution.matrixOfElements[selectedElement.mission][selectedElement.robot].mission_time;
-	
+
 	addElementAtEnd(l_robots.size()+currIteration-1, timeOfExecution); //igual ao TEA*
 
 	return -1;
@@ -268,12 +310,12 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
             int vertex_end = l_missions[m].vertex;
 
            // float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
-			float sum_time = getTEAstarOffline(robot_id, vertex_origin, vertex_end);
+			float sum_time = getTEAstarOffline(end_position+1, vertex_origin, m);  //note: end_position is id_robot in offline ( TAKE ATTENTION FOR ONLINE)
 
             element e;
             e.robot = selectedElement.robot;
             e.mission = m;
-            e.initial_time = mission_time;
+            e.initial_time = mission_time; // TODO: Initial time = initital time (do anterior) + mission time (do anterior)
             e.mission_time = sum_time;// + mission_time;
 
             initial_solution.matrixOfElements[m][end_position+1] = e;
@@ -283,8 +325,7 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
 		}
 }
 
-void heuristic_class::printResults(void)
-{
+void heuristic_class::printResults(void) {
 	std::vector<element>::iterator it;
 	int i=0;
 
@@ -297,9 +338,9 @@ void heuristic_class::printResults(void)
 
 	return;
 }
-void heuristic_class::printMinimumArray(void)
-{
-	
+
+void heuristic_class::printMinimumArray(void) {
+
 	std::cout << "\n   Min time" << std::endl;
 	for(int m=0; m < l_missions.size(); m++)
 	{
@@ -309,10 +350,11 @@ void heuristic_class::printMinimumArray(void)
 
 	return;
 }
+
 //##########################################################
-void heuristic_class::runHeuristic1(void)
-{
-	
+
+void heuristic_class::runHeuristic1(void) {
+
 	solutionInitialSetup();  //incluir aqui o TEA*
 	printSolutionTable();
 
