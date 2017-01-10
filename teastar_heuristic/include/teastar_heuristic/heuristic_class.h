@@ -2,8 +2,8 @@
 #include "teastar_msgs/GetTEAstarTime.h"
 
 // TODO: This cannot be declared as such. ////
-#define NUM_ROBOTS 3
-#define NUM_MISSIONS 5
+#define NUM_ROBOTS 5
+#define NUM_MISSIONS 9
 //int const NUM_ROBOTS = 3;
 //int const NUM_MISSIONS = 5;
 //////////////////////////////////////////////
@@ -68,7 +68,7 @@ public:
 
 
 
-	//float getTEAstarOnline(int robot, int vertex_origin, int vertex_end);
+	float getTEAstarOnline(int robot, int vertex_origin, int vertex_end);
 	float getTEAstarOffline(int robot, int vertex_origin, int vertex_end);
     void initializeListOfRobots(void);
     void initializeListOfMissions(void);
@@ -122,15 +122,25 @@ void heuristic_class::initializeListOfRobots(void) {
 
     robot r1;
     r1.id = 1;
-    r1.vertex = 7;
+    r1.vertex = 795;
 
     robot r2;
     r2.id = 2;
-    r2.vertex = 7;
+    r2.vertex = 104;
+
+    robot r3;
+    r3.id = 3;
+    r3.vertex = 792;
+
+    robot r4;
+    r4.id = 4;
+    r4.vertex = 119;
 
     l_robots.push_back(r0);
     l_robots.push_back(r1);
     l_robots.push_back(r2);
+    l_robots.push_back(r3);
+    l_robots.push_back(r4);
 
 }
 
@@ -138,7 +148,7 @@ void heuristic_class::initializeListOfMissions(void) {
 
     mission m0;
     m0.id = 0;
-    m0.vertex = 71;
+    m0.vertex = 74;
 
     mission m1;
     m1.id = 1;
@@ -146,21 +156,41 @@ void heuristic_class::initializeListOfMissions(void) {
 
     mission m2;
     m2.id = 2;
-    m2.vertex = 71;
+    m2.vertex = 693;
 
 	mission m3;
-    m2.id = 3;
-    m2.vertex = 71;
+    m3.id = 3;
+    m3.vertex = 699;
 
 	mission m4;
-    m2.id = 4;
-    m2.vertex = 71;
+    m4.id = 4;
+    m4.vertex = 530;
+
+    mission m5;
+    m5.id = 5;
+    m5.vertex = 536;
+
+    mission m6;
+    m6.id = 6;
+    m6.vertex = 545;
+
+    mission m7;
+    m7.id = 7;
+    m7.vertex = 554;
+
+    mission m8;
+    m8.id = 8;
+    m8.vertex = 747;
 
     l_missions.push_back(m0);
     l_missions.push_back(m1);
     l_missions.push_back(m2);
 	l_missions.push_back(m3);
 	l_missions.push_back(m4);
+	l_missions.push_back(m5);
+    l_missions.push_back(m6);
+    l_missions.push_back(m7);
+    l_missions.push_back(m8);
 
 }
 
@@ -175,8 +205,8 @@ void heuristic_class::solutionInitialSetup(void) {
             int vertex_origin = l_robots[r].vertex;
             int vertex_end = l_missions[m].vertex;
 
-           // float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
-			 float sum_time = getTEAstarOffline(robot_id, vertex_origin, vertex_end);
+            float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
+			// float sum_time = getTEAstarOffline(robot_id, vertex_origin, vertex_end);
 
             element e;
             e.robot = l_robots[r].id;;
@@ -212,7 +242,7 @@ float heuristic_class::getTEAstarOffline(int robot, int vertex_origin, int verte
 	offlineTime +=1;
 	return offlineTime;
 }
-/*
+
 float heuristic_class::getTEAstarOnline(int robot, int vertex_origin, int vertex_end) {
 
     float sum_time;
@@ -229,14 +259,13 @@ float heuristic_class::getTEAstarOnline(int robot, int vertex_origin, int vertex
         return sum_time;
     }
     else {
-     //   ROS_ERROR_STREAM("[TEA* Heuristic] [AGV " << robot <<"] Failed to call service get_teastar_time");
-
+        ROS_ERROR_STREAM("[TEA* Heuristic] [AGV " << robot <<"] Failed to call service get_teastar_time");
         return -1;
     }
 
 
 }
-*/
+
 void heuristic_class::printSolutionTable(void) {
 
 	// std::cout<<"printing solution"<<std::endl;
@@ -257,7 +286,7 @@ void heuristic_class::printSolutionTable(void) {
 
         for(int m=0; m < l_missions.size(); m++) {
 
-			std::cout<<" "<< initial_solution.matrixOfElements[m][r].initial_time <<"->"<<initial_solution.matrixOfElements[m][r].mission_time<<" | ";
+			std::cout << "    " << ceil(initial_solution.matrixOfElements[m][r].mission_time) << "    |";
 
 		}
 
@@ -371,8 +400,7 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
 		}
 }
 
-void heuristic_class::printResults(void)
-{
+void heuristic_class::printResults(void) {
 	std::vector<element>::iterator it;
 	int i=0;
 
@@ -385,8 +413,8 @@ void heuristic_class::printResults(void)
 
 	return;
 }
-void heuristic_class::printMinimumArray(void)
-{
+
+void heuristic_class::printMinimumArray(void) {
 
 	std::cout << "\n   Min time" << std::endl;
 	for(int m=0; m < l_missions.size(); m++)
@@ -397,33 +425,34 @@ void heuristic_class::printMinimumArray(void)
 
 	return;
 }
+
 //##########################################################
-void heuristic_class::runHeuristic1(void)
-{
+
+void heuristic_class::runHeuristic1(void) {
 
 	solutionInitialSetup();  //incluir aqui o TEA*
 	printSolutionTable();
-
-	while(getRemainingMissions() >= 1)
-	{
-
-		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
-		updateMinimumTime();
-
-		std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
-		//std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
-
-		std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
-		printMinimumArray();
-
-		selectTime();		//incluir aqui o TEA*
-
-		currIteration += 1;
-		printSolutionTable();
-
-		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
-	}
-
-	printResults();
+    //
+	// while(getRemainingMissions() >= 1)
+	// {
+    //
+	// 	std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
+	// 	updateMinimumTime();
+    //
+	// 	std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
+	// 	//std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+    //
+	// 	std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
+	// 	printMinimumArray();
+    //
+	// 	selectTime();		//incluir aqui o TEA*
+    //
+	// 	currIteration += 1;
+	// 	printSolutionTable();
+    //
+	// 	std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
+	// }
+    //
+	// printResults();
 
 }
