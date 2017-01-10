@@ -8,6 +8,9 @@
 #define NUM_ROBOTS 5
 #define NUM_MISSIONS 9
 
+#define SELECTABLE false
+#define SELECTED true
+
 float const MATRIX_TIMES_OFFLINE[NUM_MISSIONS][NUM_ROBOTS] = {
 	{112, 122, 191, 198, 208},  //0
 	{97,  108, 177, 184, 193},  //1
@@ -96,7 +99,13 @@ public:
     void printSolutionTable(void);
 	int getNextTime(void);
 	void addElementAtEnd(int end_position, float mission_time);
-
+	
+	//####
+	bool missionIsSelectable(int mission);
+	bool missionIsSelected(int mission);
+	bool robotIsSelectable(int robot);
+	bool robotIsSelected(int robot);
+	//####
 
 	int getRemainingMissions(void);
 	float getMinimumTime(void);

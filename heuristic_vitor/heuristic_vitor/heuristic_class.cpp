@@ -113,6 +113,21 @@ void heuristic_class::initializeListOfMissions(void) {
 
 }
 
+/////
+bool heuristic_class::missionIsSelectable(int mission){
+	return !initial_solution.selectedMissions[mission];
+}
+bool heuristic_class::missionIsSelected(int mission){
+	return initial_solution.selectedMissions[mission];
+}
+bool heuristic_class::robotIsSelectable(int robot){
+	return !initial_solution.selectedRobots[robot];
+}
+bool heuristic_class::robotIsSelected(int robot){
+	return initial_solution.selectedRobots[robot];
+}
+////
+
 void heuristic_class::solutionInitialSetup(void) {
 
 	for(int r=0; r < l_robots.size(); r++)
@@ -143,15 +158,15 @@ void heuristic_class::solutionInitialSetup(void) {
 	for(int r=0; r < (l_robots.size() + l_missions.size()); r++)
 	{
 		initial_solution.timeOfAGVs[r] = 0;
-		initial_solution.selectedRobots[r] = false;
+		initial_solution.selectedRobots[r] = SELECTED;//= true;
 	}
 	for(int r=0; r < l_robots.size(); r++)
 	{
-		initial_solution.selectedRobots[r] = true;
+		initial_solution.selectedRobots[r] = SELECTABLE;//= false;
 	}
 	for(int m=0; m < l_missions.size(); m++)
 	{
-		initial_solution.selectedMissions[m] = false;
+		initial_solution.selectedMissions[m] = SELECTABLE;//= false;
 	}
 
 }
@@ -234,7 +249,7 @@ float heuristic_class::getMaximumTime(void) {
 
 	for(int m=0; m < l_missions.size()  + 1; m++)
 	{
-		if(initial_solution.minimumTimeMissions[m] > maximumTime && !initial_solution.selectedMissions[m])
+		if(initial_solution.minimumTimeMissions[m] > maximumTime && missionIsSelectable(m))
 		{
 			selectedElement.robot = initial_solution.minimumTimeAGV[m];
 			selectedElement.mission=m;
@@ -253,7 +268,7 @@ float heuristic_class::getMinimumTime(void) {
 
 	for(int m=0; m < l_missions.size(); m++)
 	{
-		if(initial_solution.minimumTimeMissions[m] < minimumTime && !initial_solution.selectedMissions[m])
+		if(initial_solution.minimumTimeMissions[m] < minimumTime && missionIsSelectable(m))
 		{
 			selectedElement.robot = initial_solution.minimumTimeAGV[m];
 			selectedElement.mission=m;
@@ -277,7 +292,7 @@ void heuristic_class::updateMinimumTime(void) {
 	{
 		for(int m=0; m < l_missions.size(); m++)
 		{
-			if(initial_solution.selectedRobots[r] && !initial_solution.selectedMissions[m] && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.minimumTimeMissions[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+			if(robotIsSelectable(r) && missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.minimumTimeMissions[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
 			{
 				initial_solution.minimumTimeMissions[m] = initial_solution.matrixOfElements[m][r].mission_time;
 				initial_solution.minimumTimeAGV[m] = r;
@@ -288,9 +303,9 @@ void heuristic_class::updateMinimumTime(void) {
 
 int heuristic_class::selectTime(void) {
 
-	initial_solution.selectedMissions[selectedElement.mission]=true;
-	initial_solution.selectedRobots[selectedElement.robot]=false;
-	initial_solution.selectedRobots[l_robots.size()+currIteration-1]=true;
+	initial_solution.selectedMissions[selectedElement.mission]			= SELECTED;		//=true;					// put currently selected mission as "selected"
+	initial_solution.selectedRobots[selectedElement.robot]				= SELECTED;		//=true;					// put currently selected robot as "selected"
+	initial_solution.selectedRobots[l_robots.size()+currIteration-1]	= SELECTABLE;	//=false;		// put new line inserted select robot array as "selectable"
 
 	initial_solution.selectElements.push_back(selectedElement);
 
