@@ -46,6 +46,9 @@ private:
     // int NUM_ROBOTS = 3;
     // int NUM_MISSIONS = 5;
 
+    ros::NodeHandlePtr node_handle_;
+    ros::ServiceClient client_;
+
     std::vector<robot> l_robots;
     std::vector<mission> l_missions;
     solution initial_solution;
@@ -58,15 +61,10 @@ private:
 
 public:
 
-    // TODO: THIS CANNOT BE DONE HERE. //////////////////////////////////////////////
-    ros::NodeHandle n;
-    ros::ServiceClient client = n.serviceClient<teastar_msgs::GetTEAstarTime>("get_teastar_time");
-    /////////////////////////////////////////////////////////////////////////////////
-
 	heuristic_class(void);
 	~heuristic_class(void);
 
-
+    void setupConfigurationFromParameterServer(ros::NodeHandlePtr& node_handle);
 
 	float getTEAstarOnline(int robot, int vertex_origin, int vertex_end);
 	float getTEAstarOffline(int robot, int vertex_origin, int vertex_end);
@@ -89,9 +87,6 @@ public:
 
 	//####
 	void runHeuristic1(void);
-
-
-
 };
 
 // Constructor
@@ -113,6 +108,17 @@ heuristic_class::heuristic_class(void) {
 
 // Destructor
 heuristic_class::~heuristic_class(void) {}
+
+// ROS Configuration Setup
+void heuristic_class::setupConfigurationFromParameterServer(ros::NodeHandlePtr& node_handle) {
+
+    // NodeHandle
+    node_handle_ = node_handle;
+
+    // ROS Services
+    client_ = node_handle_->serviceClient<teastar_msgs::GetTEAstarTime>("get_teastar_time");
+
+}
 
 void heuristic_class::initializeListOfRobots(void) {
 
@@ -253,7 +259,7 @@ float heuristic_class::getTEAstarOnline(int robot, int vertex_origin, int vertex
     srv.request.vertex_origin = vertex_origin;
     srv.request.vertex_end = vertex_end;
 
-    if (client.call(srv)) {
+    if (client_.call(srv)) {
         sum_time = srv.response.sum_time;
 
         return sum_time;
