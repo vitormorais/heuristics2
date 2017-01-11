@@ -65,6 +65,7 @@ typedef struct{
 	int l_max_time_miss_robot[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
 
 	std::vector<element> l_minimumTime;
+	std::vector<element> l_maximumTime;
 
 }solution;
 
@@ -110,6 +111,11 @@ public:
 	bool missionIsSelected(int mission);
 	bool robotIsSelectable(int robot);
 	bool robotIsSelected(int robot);
+	//####
+
+	void updateMaximumTime(void);
+	void printMaximumArray(void);
+	float getMinimumOfMaximum(void);
 	//####
 
 	int getRemainingMissions(void);

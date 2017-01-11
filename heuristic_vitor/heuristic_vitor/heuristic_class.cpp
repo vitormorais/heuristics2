@@ -127,6 +127,66 @@ bool heuristic_class::robotIsSelected(int robot){
 	return initial_solution.selectedRobots[robot];
 }
 ////
+void heuristic_class::updateMaximumTime(void) {
+	
+	initial_solution.l_maximumTime.clear();
+	for(int m=0; m < l_missions.size(); m++) 
+	{
+		initial_solution.l_max_time_miss_value[m] = 0;
+		initial_solution.l_max_time_miss_robot[m] = 0;  // TODO: This can be dangerous...
+	}
+
+	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++)
+	{
+		if(robotIsSelectable(r)){
+			for(int m=0; m < l_missions.size(); m++)
+			{
+				if(missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.l_max_time_miss_value[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+				{
+					initial_solution.l_max_time_miss_value[m] = initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time;
+					initial_solution.l_max_time_miss_robot[m] = r;
+				}
+			}
+		}
+	}
+
+	for(int m=0; m < l_missions.size(); m++) 
+	{
+		initial_solution.l_maximumTime.push_back(initial_solution.matrixOfElements[m][initial_solution.l_max_time_miss_robot[m]]);
+	}
+}
+void heuristic_class::printMaximumArray(void) {
+
+	std::cout << "\n   Max time" << std::endl;
+	for(int m=0; m < l_missions.size(); m++)
+	{
+		std::cout <<"M" << m << ": " << initial_solution.l_min_time_miss_value[m] << "st:" <<initial_solution.selectedMissions[m] <<"  | ";
+    }
+
+
+	return;
+}
+float heuristic_class::getMinimumOfMaximum(void) {
+	float minimumTime = 100000;
+	float minimumTime2 = 100000;
+	int minimum_mission = 0;
+	
+	for(int m=0; m < l_missions.size(); m++){
+		if(missionIsSelectable(m) && minimumTime2 > (initial_solution.l_maximumTime[m].initial_time+initial_solution.l_maximumTime[m].mission_time))
+		{
+			minimumTime2 = (initial_solution.l_maximumTime[m].initial_time+initial_solution.l_maximumTime[m].mission_time);
+			minimum_mission = m;
+		}
+	}
+
+	selectedElement = initial_solution.l_maximumTime[minimum_mission];
+
+
+	return minimumTime2;
+}
+
+////
+
 
 void heuristic_class::solutionInitialSetup(void) {
 
@@ -384,9 +444,12 @@ void heuristic_class::runHeuristic1(void) {
 		
 		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
 		updateMinimumTime();
+		updateMaximumTime();
 
 		//std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
-		std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+		//std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+
+		std::cout <<"\nMinimum of maximum time:"<< getMinimumOfMaximum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
 
 		std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
 		printMinimumArray();
