@@ -390,6 +390,21 @@ int heuristic_class::getRemainingMissions(void) {
 	return remainingMissions;
 }
 
+int heuristic_class::getMaxResult(void) {
+	std::vector<element>::iterator it;
+	int i=0;
+	float maximum = 0;
+
+	for(it=initial_solution.selectElements.begin() ; it < initial_solution.selectElements.end(); it++,i++ )
+	{
+		if ((it->initial_time + it->mission_time) > maximum) {
+			maximum = it->initial_time + it->mission_time;
+		}
+    }
+
+
+	return maximum;
+}
 
 int heuristic_class::selectTime(void) {
 
@@ -448,26 +463,28 @@ void heuristic_class::printResults(void) {
 
 //##########################################################
 
-void heuristic_class::runHeuristic1(void) {
+void heuristic_class::runHeuristic1(int path) {
 
 	solutionInitialSetup();  //incluir aqui o TEA*
-	printSolutionTable();
+	//printSolutionTable();
 
 
 
 	while(getRemainingMissions() >= 1)
 	{
 		
-		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
+		//std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
 		
 		updateMinimumTime();
 		updateMaximumTime();
 
-		if(MATRIX_OF_PATHS[0][currIteration] == MIN){
-			std::cout <<"\nMinimum time:"<< getMinimumOfMinimum();
+		if(MATRIX_OF_PATHS[path][currIteration] == MIN){
+			//std::cout <<"\nMinimum time:"<< 
+				getMinimumOfMinimum();
 		}
 		else{
-			std::cout <<"\nMaximum time:"<< getMaximumOfMinimum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+			//std::cout <<"\nMaximum time:"<< 
+				getMaximumOfMinimum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
 		}
 
 		//std::cout <<"\nMinimum time:"<< getMinimumOfMinimum(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
@@ -478,7 +495,7 @@ void heuristic_class::runHeuristic1(void) {
 		//std::cout <<"\nMaximum of maximum time:"<< getMaximumOfMaximum();
 
 
-		std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
+		//std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
 	//	printMinimumArray();
 
 		selectTime();		//incluir aqui o TEA*
@@ -486,7 +503,7 @@ void heuristic_class::runHeuristic1(void) {
 		currIteration += 1;
 		//printSolutionTable();
 
-		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
+		//std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
 	}
 
 	printResults();

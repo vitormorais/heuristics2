@@ -15,8 +15,8 @@
 #define MIN false  //TODO:could be dangerous
 #define MAX true
 
-int const MATRIX_OF_PATHS[NUM_OF_PATHS][NUM_MISSIONS] = {
-	   {MIN,   MAX,   MIN,   MAX,   MIN,   MIN,   MIN,   MIN,   MIN},       //0
+bool const MATRIX_OF_PATHS[NUM_OF_PATHS][NUM_MISSIONS] = {
+	   {MIN,   MIN,   MIN,   MIN,   MIN,   MIN,   MIN,   MIN,   MIN},       //0
 	   {MAX,   MAX,   MAX,   MAX,   MAX,   MAX,   MAX,   MAX,   MAX},       //1
 
 };
@@ -136,7 +136,7 @@ public:
 	//####
 
 	int getRemainingMissions(void);
-
+	int getMaxResult(void);
 	
 	int selectTime(void);
 
@@ -144,5 +144,6 @@ public:
 
 
 	//####
-	void runHeuristic1(void);
+	void runHeuristic1(int path);
+
 };

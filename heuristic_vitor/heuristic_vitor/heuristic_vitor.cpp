@@ -21,15 +21,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	//filetowrite << "########  V1  #######\n";
 
 	heuristic_class *heuristic;
+	for(int path=0;  path<NUM_OF_PATHS;  path++){
+		heuristic = new heuristic_class();
 
-	heuristic = new heuristic_class();
+		//heuristic->runHeuristic1();
+		heuristic->runHeuristic1(path);
+		std::cout <<"\n##   PATH "<<path<<"\n##   MAX " << heuristic->getMaxResult() << "\n";
 
-	//heuristic->runHeuristic1();
-	heuristic->runHeuristic1();
-
-
+		delete heuristic;
+	}
 	
-	delete heuristic;
 	//filetowrite.close();
 
 	std::cout<<"\n\nend\npress any key to exit"<<std::endl;
