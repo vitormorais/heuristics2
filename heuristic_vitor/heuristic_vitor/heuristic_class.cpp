@@ -463,20 +463,28 @@ void heuristic_class::runHeuristic1(void) {
 		updateMinimumTime();
 		updateMaximumTime();
 
-		std::cout <<"\nMinimum time:"<< getMinimumOfMinimum(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
+		if(MATRIX_OF_PATHS[0][currIteration] == MIN){
+			std::cout <<"\nMinimum time:"<< getMinimumOfMinimum();
+		}
+		else{
+			std::cout <<"\nMaximum time:"<< getMaximumOfMinimum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+		}
+
+		//std::cout <<"\nMinimum time:"<< getMinimumOfMinimum(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
 		//std::cout <<"\nMinimum time:"<< getMaximumOfMinimum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+
 
 		//std::cout <<"\nMinimum of maximum time:"<< getMinimumOfMaximum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
 		//std::cout <<"\nMaximum of maximum time:"<< getMaximumOfMaximum();
 
 
 		std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
-		printMinimumArray();
+	//	printMinimumArray();
 
 		selectTime();		//incluir aqui o TEA*
 
 		currIteration += 1;
-		printSolutionTable();
+		//printSolutionTable();
 
 		std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
 	}

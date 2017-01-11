@@ -11,6 +11,17 @@
 #define SELECTABLE false
 #define SELECTED true
 
+#define NUM_OF_PATHS 2
+#define MIN false  //TODO:could be dangerous
+#define MAX true
+
+int const MATRIX_OF_PATHS[NUM_OF_PATHS][NUM_MISSIONS] = {
+	   {MIN,   MAX,   MIN,   MAX,   MIN,   MIN,   MIN,   MIN,   MIN},       //0
+	   {MAX,   MAX,   MAX,   MAX,   MAX,   MAX,   MAX,   MAX,   MAX},       //1
+
+};
+
+
 float const MATRIX_TIMES_OFFLINE[NUM_MISSIONS][NUM_ROBOTS+NUM_MISSIONS] = {
 	{112,   122,   191,   198,   122,   191,   191,   198,   122,   198,   122,   191,   198,    208},       //0
 	{97,   108,   177,   184,   108,   177,   177,   184,   108,   184,   108,   177,   184,    193},        //1
