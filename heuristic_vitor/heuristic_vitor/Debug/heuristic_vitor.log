@@ -1,7 +1,7 @@
-﻿Build started 11/01/2017 13:50:44.
+﻿Build started 11/01/2017 19:34:46.
      1>Project "C:\Users\Vitor\Desktop\Doutoramento\1st_semester\Heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_vitor.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Touching "Debug\heuristic_vitor.unsuccessfulbuild".
+         Creating "Debug\heuristic_vitor.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
          All outputs are up-to-date.
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\heuristic_vitor.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt heuristic_class.cpp
@@ -11,23 +11,24 @@
      1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(142): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(153): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(161): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(174): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(193): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(195): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(218): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(222): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(226): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(167): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(170): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(181): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(190): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(201): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(215): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(233): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(251): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(269): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(276): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(280): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(304): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(323): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(340): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(346): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(349): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(360): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(384): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(424): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(288): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(290): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(313): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(317): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(321): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(364): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(371): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(375): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_class.cpp(411): warning C4018: '<' : signed/unsigned mismatch
        ManifestResourceCompile:
          All outputs are up-to-date.
        Link:
@@ -48,4 +49,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.09
+Time Elapsed 00:00:02.05

@@ -114,18 +114,23 @@ public:
 	//####
 
 	void updateMaximumTime(void);
+	void updateMinimumTime(void);
 	void printMaximumArray(void);
+	void printMinimumArray(void);
+
+	float getMinimumOfMinimum(void);
 	float getMinimumOfMaximum(void);
+	float getMaximumOfMinimum(void);
+	float getMaximumOfMaximum(void);
 	//####
 
 	int getRemainingMissions(void);
-	float getMinimumTime(void);
-	float getMaximumTime(void);
-	void updateMinimumTime(void);
+
+	
 	int selectTime(void);
 
 	void printResults(void);
-	void printMinimumArray(void);
+
 
 	//####
 	void runHeuristic1(void);
