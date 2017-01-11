@@ -63,6 +63,8 @@ typedef struct{
 	float l_max_time_miss_value[NUM_MISSIONS];	//array com o tempo mínimo
 	int l_max_time_miss_robot[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
 
+	std::vector<element> l_minimumTime;
+
 }solution;
 
 

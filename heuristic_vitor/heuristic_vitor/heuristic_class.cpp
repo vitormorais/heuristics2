@@ -263,24 +263,39 @@ float heuristic_class::getMaximumTime(void) {
 
 float heuristic_class::getMinimumTime(void) {
 	float minimumTime = 100000;
+	float minimumTime2 = 100000;
+	int minimum_mission = 0;
+	
+	//for(int m=0; m < l_missions.size(); m++)
+	//{
+	//	if(initial_solution.l_min_time_miss_value[m] < minimumTime && missionIsSelectable(m))
+	//	{
+	//		selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
+	//		selectedElement.mission=m;
+	//		selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
+	//		selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
+	//		minimumTime = initial_solution.l_min_time_miss_value[m];
+			
+	//	}
+	//}
 
-
-	for(int m=0; m < l_missions.size(); m++)
-	{
-		if(initial_solution.l_min_time_miss_value[m] < minimumTime && missionIsSelectable(m))
+	for(int m=0; m < l_missions.size(); m++){
+		if(missionIsSelectable(m) && minimumTime2 > (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time))
 		{
-			selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
-			selectedElement.mission=m;
-			selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
-			selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-			minimumTime = initial_solution.l_min_time_miss_value[m];
+			minimumTime2 = (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time);
+			minimum_mission = m;
 		}
 	}
 
-	return minimumTime;
+	selectedElement = initial_solution.l_minimumTime[minimum_mission];
+
+
+	return minimumTime2;
 }
 
 void heuristic_class::updateMinimumTime(void) {
+	
+	initial_solution.l_minimumTime.clear();
 	for(int m=0; m < l_missions.size(); m++) // TODO: The "+1" can be a bug...
 	{
 		initial_solution.l_min_time_miss_value[m] = 10000;
@@ -298,13 +313,21 @@ void heuristic_class::updateMinimumTime(void) {
 			}
 		}
 	}
+
+	for(int m=0; m < l_missions.size(); m++) // TODO: The "+1" can be a bug...
+	{
+		initial_solution.l_minimumTime.push_back(initial_solution.matrixOfElements[m][initial_solution.l_min_time_miss_robot[m]]);
+		//initial_solution.l_min_time_miss_robot[m] = 0;
+	}
 }
 
 int heuristic_class::selectTime(void) {
 
+	int aux = initial_solution.l_min_time_miss_robot[selectedElement.mission];
+
 	initial_solution.selectedMissions[selectedElement.mission]			= SELECTED;		//=true;					// put currently selected mission as "selected"
-	initial_solution.selectedRobots[selectedElement.robot]				= SELECTED;		//=true;					// put currently selected robot as "selected"
-	initial_solution.selectedRobots[l_robots.size()+currIteration-1]	= SELECTABLE;	//=false;		// put new line inserted select robot array as "selectable"
+	initial_solution.selectedRobots[aux]				= SELECTED;		//=true;					// put currently selected robot as "selected"
+	initial_solution.selectedRobots[l_robots.size()+currIteration]	= SELECTABLE;	//=false;		// put new line inserted select robot array as "selectable"
 
 	initial_solution.selectElements.push_back(selectedElement);
 
