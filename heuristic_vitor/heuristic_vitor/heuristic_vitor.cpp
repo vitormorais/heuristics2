@@ -26,7 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		//heuristic->runHeuristic1();
 		heuristic->runHeuristic1(path);
-		std::cout <<"\n##   PATH "<<path<<"\n##   MAX " << heuristic->getMaxResult() << "\n";
+		std::cout <</*"\n PATH "<<path<<"; MAX " << */ heuristic->getMaxResult() << "\n";
 
 		delete heuristic;
 	}

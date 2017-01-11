@@ -1,4 +1,4 @@
-﻿Build started 11/01/2017 22:00:35.
+﻿Build started 11/01/2017 22:25:02.
      1>Project "C:\Users\Vitor\Desktop\Doutoramento\1st_semester\Heuristics\2.dev2ndwork\heuristics2\heuristic_vitor\heuristic_vitor\heuristic_vitor.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\heuristic_vitor.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -26,4 +26,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.89
+Time Elapsed 00:00:02.14

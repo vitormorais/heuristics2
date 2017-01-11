@@ -506,6 +506,6 @@ void heuristic_class::runHeuristic1(int path) {
 		//std::cout <<"\nRemaining Missions:"<< getRemainingMissions();
 	}
 
-	printResults();
+	//printResults();
 
 }
