@@ -238,19 +238,19 @@ int heuristic_class::getRemainingMissions(void) {
 
 float heuristic_class::getMaximumTime(void) {
 	float maximumTime = 0;
+	//float maximumTime2 = 100000;
+	int maximum_mission = 0;
 	
-
-	for(int m=0; m < l_missions.size()  + 1; m++)
-	{
-		if(initial_solution.l_min_time_miss_value[m] > maximumTime && missionIsSelectable(m))
+	for(int m=0; m < l_missions.size(); m++){
+		if(missionIsSelectable(m) && maximumTime < (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time))
 		{
-			selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
-			selectedElement.mission=m;
-			selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
-			selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-			maximumTime = initial_solution.l_min_time_miss_value[m];
+			maximumTime = (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time);
+			maximum_mission = m;
 		}
 	}
+
+	selectedElement = initial_solution.l_minimumTime[maximum_mission];
+
 
 	return maximumTime;
 }
@@ -260,19 +260,6 @@ float heuristic_class::getMinimumTime(void) {
 	float minimumTime2 = 100000;
 	int minimum_mission = 0;
 	
-	//for(int m=0; m < l_missions.size(); m++)
-	//{
-	//	if(initial_solution.l_min_time_miss_value[m] < minimumTime && missionIsSelectable(m))
-	//	{
-	//		selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
-	//		selectedElement.mission=m;
-	//		selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
-	//		selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-	//		minimumTime = initial_solution.l_min_time_miss_value[m];
-			
-	//	}
-	//}
-
 	for(int m=0; m < l_missions.size(); m++){
 		if(missionIsSelectable(m) && minimumTime2 > (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time))
 		{
@@ -342,7 +329,7 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
             int vertex_end = l_missions[m].vertex;
 
            // float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
-			float sum_time = getTEAstarOffline(end_position-NUM_ROBOTS, vertex_origin, m);  //note: end_position is id_robot in offline ( TAKE ATTENTION FOR ONLINE)
+			float sum_time = getTEAstarOffline(end_position, vertex_origin, m);  //note: end_position is id_robot in offline ( TAKE ATTENTION FOR ONLINE)
 
             element e;
             e.robot = selectedElement.robot;
@@ -364,7 +351,7 @@ void heuristic_class::printResults(void) {
 	for(it=initial_solution.selectElements.begin() ; it < initial_solution.selectElements.end(); it++,i++ )
 	{
 		std::cout <<"\n   Iteration("<< i <<") M("<<it->mission<<") -  R("<<
-			it->robot<<") --> t_ini = "<<it->initial_time<<"  |  t_end = "<<it->mission_time;
+			it->robot<<") --> t_ini = "<<it->initial_time<<"  |  t_end = "<<it->initial_time + it->mission_time<<"  |  t_duration = "<<it->mission_time;
     }
 
 
@@ -398,8 +385,8 @@ void heuristic_class::runHeuristic1(void) {
 		std::cout <<"\n###########   Iteration "<<currIteration<<"   ###########\n";
 		updateMinimumTime();
 
-		std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
-		//std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+		//std::cout <<"\nMinimum time:"<< getMinimumTime(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
+		std::cout <<"\nMinimum time:"<< getMaximumTime(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
 
 		std::cout << "\nSelected R" << selectedElement.robot << " M" << selectedElement.mission<<std::endl;
 		printMinimumArray();
