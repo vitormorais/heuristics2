@@ -171,14 +171,8 @@ void heuristic_class::solutionInitialSetup(void) {
 }
 
 float heuristic_class::getTEAstarOffline(int robot, int vertex_origin, int vertex_end) {
-	
-	if(robot  <  (NUM_ROBOTS)) {  //TODO::avaliar o porquê de precisar de -1
-		return MATRIX_TIMES_OFFLINE[vertex_end][robot];
-	}
-	else {
 
-		return MATRIX_TIMES_OFFLINE[vertex_end][robot-NUM_ROBOTS];// + selectedElement.mission_time;
-	}
+		return MATRIX_TIMES_OFFLINE[vertex_end][robot];
 }
 /*
 float heuristic_class::getTEAstarOnline(int robot, int vertex_origin, int vertex_end) {
@@ -296,28 +290,29 @@ float heuristic_class::getMinimumTime(void) {
 void heuristic_class::updateMinimumTime(void) {
 	
 	initial_solution.l_minimumTime.clear();
-	for(int m=0; m < l_missions.size(); m++) // TODO: The "+1" can be a bug...
+	for(int m=0; m < l_missions.size(); m++) 
 	{
 		initial_solution.l_min_time_miss_value[m] = 10000;
-		initial_solution.l_min_time_miss_robot[m] = 0;
+		initial_solution.l_min_time_miss_robot[m] = 0;  // TODO: This can be dangerous...
 	}
 
 	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++)
 	{
-		for(int m=0; m < l_missions.size(); m++)
-		{
-			if(robotIsSelectable(r) && missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.l_min_time_miss_value[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+		if(robotIsSelectable(r)){
+			for(int m=0; m < l_missions.size(); m++)
 			{
-				initial_solution.l_min_time_miss_value[m] = initial_solution.matrixOfElements[m][r].mission_time;
-				initial_solution.l_min_time_miss_robot[m] = r;
+				if(missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.l_min_time_miss_value[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+				{
+					initial_solution.l_min_time_miss_value[m] = initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time;
+					initial_solution.l_min_time_miss_robot[m] = r;
+				}
 			}
 		}
 	}
 
-	for(int m=0; m < l_missions.size(); m++) // TODO: The "+1" can be a bug...
+	for(int m=0; m < l_missions.size(); m++) 
 	{
 		initial_solution.l_minimumTime.push_back(initial_solution.matrixOfElements[m][initial_solution.l_min_time_miss_robot[m]]);
-		//initial_solution.l_min_time_miss_robot[m] = 0;
 	}
 }
 
@@ -326,14 +321,14 @@ int heuristic_class::selectTime(void) {
 	int aux = initial_solution.l_min_time_miss_robot[selectedElement.mission];
 
 	initial_solution.selectedMissions[selectedElement.mission]			= SELECTED;		//=true;					// put currently selected mission as "selected"
-	initial_solution.selectedRobots[aux]				= SELECTED;		//=true;					// put currently selected robot as "selected"
-	initial_solution.selectedRobots[l_robots.size()+currIteration]	= SELECTABLE;	//=false;		// put new line inserted select robot array as "selectable"
+	initial_solution.selectedRobots[aux]								= SELECTED;		//=true;					// put currently selected robot as "selected"
+	initial_solution.selectedRobots[l_robots.size()+currIteration]		= SELECTABLE;	//=false;		// put new line inserted select robot array as "selectable"
 
 	initial_solution.selectElements.push_back(selectedElement);
 
 	float timeOfExecution = initial_solution.matrixOfElements[selectedElement.mission][selectedElement.robot].mission_time;
 
-	addElementAtEnd(l_robots.size()+currIteration-1, timeOfExecution); //igual ao TEA*
+	addElementAtEnd(l_robots.size()+currIteration, timeOfExecution); //igual ao TEA*
 
 	return -1;
 }
@@ -347,15 +342,15 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
             int vertex_end = l_missions[m].vertex;
 
            // float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
-			float sum_time = getTEAstarOffline(end_position+1, vertex_origin, m);  //note: end_position is id_robot in offline ( TAKE ATTENTION FOR ONLINE)
+			float sum_time = getTEAstarOffline(end_position-NUM_ROBOTS, vertex_origin, m);  //note: end_position is id_robot in offline ( TAKE ATTENTION FOR ONLINE)
 
             element e;
             e.robot = selectedElement.robot;
             e.mission = m;
-            e.initial_time = mission_time; // TODO: Initial time = initital time (do anterior) + mission time (do anterior)
+			e.initial_time = selectedElement.mission_time + selectedElement.initial_time; // FIXED: Initial time = initital time (do anterior) + mission time (do anterior)
             e.mission_time = sum_time;// + mission_time;
 
-            initial_solution.matrixOfElements[m][end_position+1] = e;
+            initial_solution.matrixOfElements[m][end_position] = e;
 
           //  ROS_INFO_STREAM("[TEA* Heuristic] [AGV " << robot_id <<"] Time between Vertex " << vertex_origin << " and Vertex " << vertex_end << ": " << sum_time);
 

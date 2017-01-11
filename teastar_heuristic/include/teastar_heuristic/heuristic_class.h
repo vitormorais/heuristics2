@@ -4,6 +4,27 @@
 // TODO: This cannot be declared as such. ////
 #define NUM_ROBOTS 5
 #define NUM_MISSIONS 9
+
+#define SELECTABLE false
+#define SELECTED true
+
+float const MATRIX_TIMES_OFFLINE[NUM_MISSIONS][NUM_ROBOTS] = {
+	{112, 122, 191, 198, 208},  //0
+	{97,  108, 177, 184, 193},  //1
+	{96,  107, 168, 175, 184},  //2
+	{108, 121, 164, 172, 181},  //3
+	{116, 123, 175, 183, 194},  //4
+	{123, 109, 186, 194, 204},  //5
+	{135, 121, 198, 206, 217},  //6
+	{145, 131, 207, 216, 226},  //7
+	{157, 143, 220, 228, 239},  //8
+};
+
+//R0 (0)|     112    |    97       |    96       |    108     |    116     |    123     |    135     |    145     |    157     |
+//R1 (0)|     122    |    108     |    107     |    121     |    123     |    109     |    121     |    131     |    143     |
+//R2 (0)|     191    |    177     |    168     |    164     |    175     |    186     |    198     |    207     |    220     |
+//R3 (0)|     198    |    184     |    175     |    172     |    183     |    194     |    206     |    216     |    228     |
+//R4 (0)|     208    |    193     |    184     |    181     |    194     |    204     |    217     |    226     |    239     |
 //int const NUM_ROBOTS = 3;
 //int const NUM_MISSIONS = 5;
 //////////////////////////////////////////////
@@ -32,9 +53,13 @@ typedef struct{
 	bool selectedMissions[NUM_MISSIONS];
 	bool selectedRobots[NUM_MISSIONS+NUM_ROBOTS];
 
-	float minimumTimeMissions[NUM_MISSIONS];	//array com o tempo mínimo
-	int minimumTimeAGV[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
-	int timeOfAGVs[NUM_MISSIONS+NUM_ROBOTS];    // TODO: Erase this variable!!!
+	float l_min_time_miss_value[NUM_MISSIONS];	//array com o tempo mínimo
+	int l_min_time_miss_robot[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
+
+	float l_max_time_miss_value[NUM_MISSIONS];	//array com o tempo mínimo
+	int l_max_time_miss_robot[NUM_MISSIONS];			//array com o agv correspondente ao tempo mínimo
+
+	std::vector<element> l_minimumTime;
 
 }solution;
 
@@ -74,7 +99,13 @@ public:
     void printSolutionTable(void);
 	int getNextTime(void);
 	void addElementAtEnd(int end_position, float mission_time);
-
+	
+	//####
+	bool missionIsSelectable(int mission);
+	bool missionIsSelected(int mission);
+	bool robotIsSelectable(int robot);
+	bool robotIsSelected(int robot);
+	//####
 
 	int getRemainingMissions(void);
 	float getMinimumTime(void);
@@ -200,6 +231,21 @@ void heuristic_class::initializeListOfMissions(void) {
 
 }
 
+/////
+bool heuristic_class::missionIsSelectable(int mission){
+	return !initial_solution.selectedMissions[mission];
+}
+bool heuristic_class::missionIsSelected(int mission){
+	return initial_solution.selectedMissions[mission];
+}
+bool heuristic_class::robotIsSelectable(int robot){
+	return !initial_solution.selectedRobots[robot];
+}
+bool heuristic_class::robotIsSelected(int robot){
+	return initial_solution.selectedRobots[robot];
+}
+////
+
 void heuristic_class::solutionInitialSetup(void) {
 
 	for(int r=0; r < l_robots.size(); r++)
@@ -229,24 +275,22 @@ void heuristic_class::solutionInitialSetup(void) {
 
 	for(int r=0; r < (l_robots.size() + l_missions.size()); r++)
 	{
-		initial_solution.timeOfAGVs[r] = 0;
-		initial_solution.selectedRobots[r] = false;
+		initial_solution.selectedRobots[r] = SELECTED;//= true;
 	}
 	for(int r=0; r < l_robots.size(); r++)
 	{
-		initial_solution.selectedRobots[r] = true;
+		initial_solution.selectedRobots[r] = SELECTABLE;//= false;
 	}
 	for(int m=0; m < l_missions.size(); m++)
 	{
-		initial_solution.selectedMissions[m] = false;
+		initial_solution.selectedMissions[m] = SELECTABLE;//= false;
 	}
 
 }
 
 float heuristic_class::getTEAstarOffline(int robot, int vertex_origin, int vertex_end) {
 
-	offlineTime +=1;
-	return offlineTime;
+		return MATRIX_TIMES_OFFLINE[vertex_end][robot];
 }
 
 float heuristic_class::getTEAstarOnline(int robot, int vertex_origin, int vertex_end) {
@@ -315,13 +359,13 @@ float heuristic_class::getMaximumTime(void) {
 
 	for(int m=0; m < l_missions.size()  + 1; m++)
 	{
-		if(initial_solution.minimumTimeMissions[m] > maximumTime && !initial_solution.selectedMissions[m])
+		if(initial_solution.l_min_time_miss_value[m] > maximumTime && missionIsSelectable(m))
 		{
-			selectedElement.robot = initial_solution.minimumTimeAGV[m];
+			selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
 			selectedElement.mission=m;
 			selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
 			selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-			maximumTime = initial_solution.minimumTimeMissions[m];
+			maximumTime = initial_solution.l_min_time_miss_value[m];
 		}
 	}
 
@@ -330,54 +374,78 @@ float heuristic_class::getMaximumTime(void) {
 
 float heuristic_class::getMinimumTime(void) {
 	float minimumTime = 100000;
+	float minimumTime2 = 100000;
+	int minimum_mission = 0;
+	
+	//for(int m=0; m < l_missions.size(); m++)
+	//{
+	//	if(initial_solution.l_min_time_miss_value[m] < minimumTime && missionIsSelectable(m))
+	//	{
+	//		selectedElement.robot = initial_solution.l_min_time_miss_robot[m];
+	//		selectedElement.mission=m;
+	//		selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
+	//		selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
+	//		minimumTime = initial_solution.l_min_time_miss_value[m];
+			
+	//	}
+	//}
 
-
-	for(int m=0; m < l_missions.size()  + 1; m++)
-	{
-		if(initial_solution.minimumTimeMissions[m] < minimumTime && !initial_solution.selectedMissions[m])
+	for(int m=0; m < l_missions.size(); m++){
+		if(missionIsSelectable(m) && minimumTime2 > (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time))
 		{
-			selectedElement.robot = initial_solution.minimumTimeAGV[m];
-			selectedElement.mission=m;
-			selectedElement.initial_time = initial_solution.matrixOfElements[m][selectedElement.robot].initial_time;
-			selectedElement.mission_time = initial_solution.matrixOfElements[m][selectedElement.robot].mission_time;
-			minimumTime = initial_solution.minimumTimeMissions[m];
+			minimumTime2 = (initial_solution.l_minimumTime[m].initial_time+initial_solution.l_minimumTime[m].mission_time);
+			minimum_mission = m;
 		}
 	}
 
-	return minimumTime;
+	selectedElement = initial_solution.l_minimumTime[minimum_mission];
+
+
+	return minimumTime2;
 }
 
 void heuristic_class::updateMinimumTime(void) {
-	for(int m=0; m < l_missions.size()  + 1; m++) // TODO: The "+1" can be a bug...
+	
+	initial_solution.l_minimumTime.clear();
+	for(int m=0; m < l_missions.size(); m++) 
 	{
-		initial_solution.minimumTimeMissions[m] = 10000;
-		initial_solution.minimumTimeAGV[m] = 0; // TODO: This can be dangerous...
+		initial_solution.l_min_time_miss_value[m] = 10000;
+		initial_solution.l_min_time_miss_robot[m] = 0;  // TODO: This can be dangerous...
 	}
 
 	for(int r=0; r < (l_robots.size()+currIteration  + 1); r++) // TODO: The "+1" can be a bug...
 	{
-		for(int m=0; m < l_missions.size()  + 1; m++) // TODO: The "+1" can be a bug...
-		{
-			if(initial_solution.selectedRobots[r] && !initial_solution.selectedMissions[m] && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.minimumTimeMissions[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+		if(robotIsSelectable(r)){
+			for(int m=0; m < l_missions.size(); m++)
 			{
-				initial_solution.minimumTimeMissions[m] = initial_solution.matrixOfElements[m][r].mission_time;
-				initial_solution.minimumTimeAGV[m] = r;
+				if(missionIsSelectable(m) && (initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time) < initial_solution.l_min_time_miss_value[m]) // TODO: SelectedRobot should be true if the robot is selected, and false if the robot is selectable.
+				{
+					initial_solution.l_min_time_miss_value[m] = initial_solution.matrixOfElements[m][r].mission_time + initial_solution.matrixOfElements[m][r].initial_time;
+					initial_solution.l_min_time_miss_robot[m] = r;
+				}
 			}
 		}
+	}
+
+	for(int m=0; m < l_missions.size(); m++) 
+	{
+		initial_solution.l_minimumTime.push_back(initial_solution.matrixOfElements[m][initial_solution.l_min_time_miss_robot[m]]);
 	}
 }
 
 int heuristic_class::selectTime(void) {
 
-	initial_solution.selectedMissions[selectedElement.mission]=true;
-	initial_solution.selectedRobots[selectedElement.robot]=false;
-	initial_solution.selectedRobots[l_robots.size()+currIteration-1]=true;
+	int aux = initial_solution.l_min_time_miss_robot[selectedElement.mission];
+
+	initial_solution.selectedMissions[selectedElement.mission]			= SELECTED;		//=true;					// put currently selected mission as "selected"
+	initial_solution.selectedRobots[aux]								= SELECTED;		//=true;					// put currently selected robot as "selected"
+	initial_solution.selectedRobots[l_robots.size()+currIteration]		= SELECTABLE;	//=false;		// put new line inserted select robot array as "selectable"
 
 	initial_solution.selectElements.push_back(selectedElement);
 
 	float timeOfExecution = initial_solution.matrixOfElements[selectedElement.mission][selectedElement.robot].mission_time;
 
-	addElementAtEnd(l_robots.size()+currIteration-1, timeOfExecution); //igual ao TEA*
+	addElementAtEnd(l_robots.size()+currIteration, timeOfExecution); //igual ao TEA*
 
 	return -1;
 }
@@ -391,15 +459,15 @@ void heuristic_class::addElementAtEnd(int end_position, float mission_time) {
             int vertex_end = l_missions[m].vertex;
 
            // float sum_time = getTEAstarOnline(robot_id, vertex_origin, vertex_end);
-			float sum_time = getTEAstarOffline(robot_id, vertex_origin, vertex_end);
+			float sum_time = getTEAstarOffline(end_position-NUM_ROBOTS, vertex_origin, m);  //note: end_position is id_robot in offline ( TAKE ATTENTION FOR ONLINE)
 
             element e;
             e.robot = selectedElement.robot;
             e.mission = m;
-            e.initial_time = mission_time; // TODO: Initial time = initital time (do anterior) + mission time (do anterior)
+			e.initial_time = selectedElement.mission_time + selectedElement.initial_time; // FIXED: Initial time = initital time (do anterior) + mission time (do anterior)
             e.mission_time = sum_time;// + mission_time;
 
-            initial_solution.matrixOfElements[m][end_position+1] = e;
+            initial_solution.matrixOfElements[m][end_position] = e;
 
           //  ROS_INFO_STREAM("[TEA* Heuristic] [AGV " << robot_id <<"] Time between Vertex " << vertex_origin << " and Vertex " << vertex_end << ": " << sum_time);
 
@@ -425,7 +493,7 @@ void heuristic_class::printMinimumArray(void) {
 	std::cout << "\n   Min time" << std::endl;
 	for(int m=0; m < l_missions.size(); m++)
 	{
-		std::cout <<"M" << m << ": " << initial_solution.minimumTimeMissions[m] << "st:" <<initial_solution.selectedMissions[m] <<"  | ";
+		std::cout <<"M" << m << ": " << initial_solution.l_min_time_miss_value[m] << "st:" <<initial_solution.selectedMissions[m] <<"  | ";
     }
 
 
