@@ -67,7 +67,7 @@ std::vector<planning> metaheuristic_class::swap1to1(std::vector<planning> input_
     if (fp == sp) { return plan_swapped; }
 
     if (fp >= input_plan.size() || sp >= input_plan.size()) {
-        ROS_ERROR_STREAM("[TEA*] [MetaHeuristic Class] Impossible to Swap! First or Second Position higher than " << input_plan.size());
+        ROS_ERROR_STREAM("[TEA*] [MetaHeuristic Class] Impossible to Swap! First or Second Position higher than " << (input_plan.size() - 1) );
         return plan_swapped;
     }
 
