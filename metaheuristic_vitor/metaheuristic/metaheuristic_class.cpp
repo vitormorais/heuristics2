@@ -27,12 +27,12 @@ void metaheuristic_class::bestImprovement(void) {
    // std::vector<planning> plan_swapped;
 	std::vector<neighbor> list_of_neighbors;
 
-	for(int i=0; i<5; i++){
+	for(int i=0; i<1; i++){
 
 		list_of_neighbors = generateListOfNeighbors(current_plan);
-	//	printNeighborhood(list_of_neighbors);
+		//printNeighborhood(list_of_neighbors);
 		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors);  	//note: pass the list of neighbours by reference or create a listOfNeighbours as an atribute
-	//	printNeighborhood(list_of_neighbors);
+		//printNeighborhood(list_of_neighbors);
 
 		int min_time_neighbor = getMinPlanningTime(list_of_neighbors);
 
@@ -97,12 +97,12 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 
 	std::vector<neighbor> list_of_neighbors;
 	
-	for(int first_mission=0; first_mission < NUM_MISSIONS; first_mission++){
-		for(int second_mission = first_mission+1; second_mission < NUM_MISSIONS; second_mission++){
-			    //std::cout << "swapping "<<first_mission<<" with "<<second_mission<<"\n";
+	for(int first_plan=0; first_plan < NUM_MISSIONS; first_plan++){
+		for(int second_plan = first_plan+1; second_plan < NUM_MISSIONS; second_plan++){
+			    std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
 				neighbor n;
-				n.plan = swap1to1(inputNeighbor.plan, first_mission, second_mission);
-				n.plan_time = 11;
+				n.plan = swap1to1(inputNeighbor.plan, first_plan, second_plan);
+				n.plan_time = 11; //TODO: verify value
 				//printPlan(n2.plan);
 				list_of_neighbors.push_back(n);
 		}
@@ -113,7 +113,10 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 
 std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list){
 	
-	//note: pass the list of neighbours by reference
+	//TODO: pass the list of neighbours by reference
+	//TODO: add incumbent pan time;
+	//TODO: add flag for first improvement
+
 	std::vector<neighbor> return_list;
 	return_list = input_list;
 
