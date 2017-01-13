@@ -20,14 +20,29 @@ void metaheuristic_class::bestImprovement(void) {
 
 	printPlan(this->starting_plan_);
 
-    std::vector<planning> plan_swapped;
+	neighbor  current_plan;
+	current_plan.plan = this->starting_plan_;
+	current_plan.plan_time =9;
 
-    plan_swapped = swap1to1(this->starting_plan_, 0, 1);
+   // std::vector<planning> plan_swapped;
+	std::vector<neighbor> list_of_neighbors;
 
-    //ROS_WARN_STREAM("SWAPPED PLAN");
-	
-    std::cout << "SWAPPED PLAN\n";
-    printPlan(plan_swapped);
+	for(int i=0; i<5; i++){
+
+		list_of_neighbors = generateListOfNeighbors(current_plan);
+	//	printNeighborhood(list_of_neighbors);
+		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors);  	//note: pass the list of neighbours by reference or create a listOfNeighbours as an atribute
+	//	printNeighborhood(list_of_neighbors);
+
+		int min_time_neighbor = getMinPlanningTime(list_of_neighbors);
+
+		std::cout<< "# "<<i<<" minTime" <<min_time_neighbor<<std::endl;
+
+		current_plan = list_of_neighbors[min_time_neighbor];  //jumps to best neighbor
+	}
+
+	printPlan(current_plan.plan);
+
 
 }
 
@@ -66,4 +81,76 @@ void metaheuristic_class::printPlan(std::vector<planning> input_plan) {
 
     }
 
+}
+
+void metaheuristic_class::printNeighborhood(std::vector<neighbor> input_list_of_neighbors){
+	
+	for (size_t i = 0; i < input_list_of_neighbors.size(); i++) {
+
+        //ROS_INFO_STREAM("[TEA*] [MetaHeuristic Class] R" << input_plan[i].robot_id << " M" << input_plan[i].mission_id << " (Vertex " << input_plan[i].mission_vertex << ")");
+		std::cout << "[TEA*] [MetaHeuristic Class] #" << i << " time " << input_list_of_neighbors[i].plan_time << std::endl;
+
+    }
+}
+
+std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inputNeighbor){
+
+	std::vector<neighbor> list_of_neighbors;
+	
+	for(int first_mission=0; first_mission < NUM_MISSIONS; first_mission++){
+		for(int second_mission = first_mission+1; second_mission < NUM_MISSIONS; second_mission++){
+			    //std::cout << "swapping "<<first_mission<<" with "<<second_mission<<"\n";
+				neighbor n;
+				n.plan = swap1to1(inputNeighbor.plan, first_mission, second_mission);
+				n.plan_time = 11;
+				//printPlan(n2.plan);
+				list_of_neighbors.push_back(n);
+		}
+	}
+	//list_of_neighbors.push_back(n2);
+	return list_of_neighbors;
+}
+
+std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list){
+	
+	//note: pass the list of neighbours by reference
+	std::vector<neighbor> return_list;
+	return_list = input_list;
+
+	for (size_t i = 0; i < return_list.size(); i++) {
+		//get time of a plan
+		return_list[i].plan_time  =  getOfflinePlanningTime(return_list[i].plan);
+		
+		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
+    }
+	
+	return return_list;
+}
+
+int metaheuristic_class::getMinPlanningTime(std::vector<neighbor> input_list){
+
+	
+	//TODO: check if input list have plans  (?)
+	float min_time = input_list[0].plan_time;
+	int min_time_position = 0;
+
+	for (size_t i = 0; i < input_list.size(); i++) {
+		//get time of a plan
+		if (input_list[i].plan_time < min_time ){
+			min_time = input_list[i].plan_time;
+			min_time_position = i;
+		}
+		
+		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
+    }
+	
+	return min_time_position;
+}
+
+float metaheuristic_class::getOfflinePlanningTime(std::vector<planning> input_plan){
+	
+
+	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX); //value between 0 and 1
+	
+	return (r * static_cast <float> (100));
 }

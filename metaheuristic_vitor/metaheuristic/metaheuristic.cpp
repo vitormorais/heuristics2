@@ -10,13 +10,14 @@
 #include <fstream>
 #include <vector>
 
-#define NUM_ROBOTS 5
-#define NUM_MISSIONS 9
+
 
 std::vector<planning> generateOfflineStartingPlan(void);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	srand(time(NULL));
+
 	std::vector<planning> starting_plan;
 	
 	starting_plan = generateOfflineStartingPlan();
