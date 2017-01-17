@@ -30,11 +30,11 @@ void metaheuristic_class::bestImprovement(bool improvement_flag) {
    // std::vector<planning> plan_swapped;
 	std::vector<neighbor> list_of_neighbors;
 
-	for(int i=0; i<1; i++){
+	for(int i=0; i<10; i++){
 
 		list_of_neighbors = generateListOfNeighbors(current_plan);
 		//printNeighborhood(list_of_neighbors);
-		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors, improvement_flag, current_plan);  	//note: pass the list of neighbours by reference or create a listOfNeighbours as an atribute
+		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors, improvement_flag, current_plan, i);
 		//printNeighborhood(list_of_neighbors);
 
 		int min_time_neighbor = getMinPlanningTime(list_of_neighbors);
@@ -102,7 +102,7 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 	
 	for(int first_plan=0; first_plan < NUM_MISSIONS; first_plan++){
 		for(int second_plan = first_plan+1; second_plan < NUM_MISSIONS; second_plan++){
-			    std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
+			    //std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
 				neighbor n;
 				n.plan = swap1to1(inputNeighbor.plan, first_plan, second_plan);
 				n.plan_time = 11; //TODO: verify value
@@ -114,7 +114,7 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 	return list_of_neighbors;
 }
 
-std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list, bool improvement_flag,  neighbor inputNeighbor){
+std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list, bool improvement_flag,  neighbor inputNeighbor, int current_iteration){
 	
 	//TODO: pass the list of neighbours by reference
 	//TODO: add incumbent pan time;
@@ -125,7 +125,7 @@ std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<nei
 
 	for (size_t i = 0; i < return_list.size(); i++) {
 		//get time of a plan
-		return_list[i].plan_time  =  getOfflinePlanningTime(return_list[i].plan);
+		return_list[i].plan_time  =  getOfflinePlanningTime(return_list[i].plan, current_iteration);
 		if (inputNeighbor.plan_time > return_list[i].plan_time && improvement_flag == FI_FLAG) {
 			//swop
 			for (size_t j = i+1; j < return_list.size(); j++){		//TODO: check if this is the best approach: identify the "smallest" and then put all times with the time of the current neighbor to avoid saving the time of the current neighbor outside the "BEST IMPROVEMENT method"
@@ -159,10 +159,103 @@ int metaheuristic_class::getMinPlanningTime(std::vector<neighbor> input_list){
 	return min_time_position;
 }
 
-float metaheuristic_class::getOfflinePlanningTime(std::vector<planning> input_plan){
+float metaheuristic_class::getOfflinePlanningTime(std::vector<planning> input_plan, int current_iteration){
 	
 
-	float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX); //value between 0 and 1
+	float t = static_cast <float> (rand()) / static_cast <float> (RAND_MAX); //value between 0 and 1
+
+
+	//return (r * static_cast <float> (10000));
+
+	//int heuristics::generateRandomNumber(int iterations)
+//{
+	float auxExpon = current_iteration*0.1;
+	auxExpon /= 25;  //var
+	auxExpon *= -1; //fixo
+
+				
+	double minValue;
+	minValue = std::expf(auxExpon);
+	minValue *= (105);
+	minValue += -2;
+	float r = minValue + static_cast <float> (rand() / static_cast <float> (RAND_MAX/0.5-minValue)); //value between 0 and 1
+//	std::cout << r*(1.5-t) << std::endl;
+	return r*(1.5-t);
+		//
+//}
+}
+
+void metaheuristic_class::simulatedAnnealing(void){
+
+
+	std::ofstream filetowrite;
+	filetowrite.open("..\\SIMUL_ANEALL.txt", std::ios_base::app);
+	filetowrite << "########  SIMUL_ANEALL  #######\n";
+
+	simulated_iteration = 0;				//t <-- 0
+	simulated_temperature = 70;//700;			//initialize T
 	
-	return (r * static_cast <float> (100));
+											//select a current point Vc at random
+	printPlan(this->starting_plan_);
+	neighbor  current_plan;
+	current_plan.plan = this->starting_plan_;
+	std::vector<neighbor> list_of_neighbors;
+											//evaluate Vc
+	current_plan.plan_time =900;
+
+	while(simulated_iteration < 1000) {		//repeat
+
+		//std::cout<<"cur_iter"<<simulated_iteration<<std::endl;
+		for(int i=0; i<10; i++){				//repeat
+
+													//select a new point Vn
+														//in the neighborhood of Vc
+			list_of_neighbors = generateListOfNeighbors(current_plan);
+
+														//if (eval(Vc) < eval(Vn)
+														//then Vc <-- Vn
+														//else if random[0,1] < e^{(eval(n)-eval(c))/T}
+															//then Vc <-- Vn
+			//list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors, improvement_flag, current_plan, i);
+			for (size_t j = 0; j < list_of_neighbors.size(); j++) {
+				//get time of a plan
+				list_of_neighbors[j].plan_time  =  getOfflinePlanningTime(list_of_neighbors[j].plan, simulated_iteration);  //está correto o 'i'
+				float aux=(current_plan.plan_time > list_of_neighbors[j].plan_time) ? list_of_neighbors[j].plan_time : current_plan.plan_time;
+				filetowrite << list_of_neighbors[j].plan_time << " ; " << aux << std::endl;
+				if (current_plan.plan_time > list_of_neighbors[j].plan_time ) {//&& FI_FLAG == FI_FLAG) {
+					//swop
+					//falta ir ao getminplanningtime....
+					current_plan = list_of_neighbors[j];
+					break;
+				}
+				else if (j >= list_of_neighbors.size()-1) {  //não encontrou nenhum mínimo
+						for (size_t l = 0; l < list_of_neighbors.size(); l++){
+							int eval_threshold = 10;
+							if (current_plan.plan_time + eval_threshold > list_of_neighbors[j].plan_time) {
+								//swop
+								//falta ir ao getminplanningtime....
+								current_plan = list_of_neighbors[j];
+								break;
+							}
+						}
+						break;
+				}
+			}
+		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
+    
+			//printNeighborhood(list_of_neighbors);
+
+													
+
+		}									//until (termination-condition)
+	std::cout<<current_plan.plan_time<<std::endl;
+												//T <-- g(T, t)
+	simulated_iteration += 1;					//t <-- t+1
+
+
+	}										//until (halting criterion)
+											
+	//print, etc...							//end
+	printPlan(current_plan.plan);		
+	
 }
