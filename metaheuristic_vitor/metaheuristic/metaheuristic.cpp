@@ -10,6 +10,8 @@
 #include <fstream>
 #include <vector>
 
+#define BI_FLAG true
+#define FI_FLAG false
 
 
 std::vector<planning> generateOfflineStartingPlan(void);
@@ -31,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     metaheuristic_class teastar_metaheuristic(starting_plan);
 
-    teastar_metaheuristic.bestImprovement();
+    teastar_metaheuristic.bestImprovement(BI_FLAG);
 
 
 	getchar();

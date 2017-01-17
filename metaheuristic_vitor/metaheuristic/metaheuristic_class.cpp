@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 #include "metaheuristic_class.h"
 
+#define BI_FLAG true
+#define FI_FLAG false
+
 ///////////////////
 // CLASS METHODS //
 ///////////////////
@@ -13,7 +16,7 @@ metaheuristic_class::~metaheuristic_class(void) {}
 
 void metaheuristic_class::loadStartingPlan(std::vector<planning> starting_plan) { this->starting_plan_ = starting_plan; }
 
-void metaheuristic_class::bestImprovement(void) {
+void metaheuristic_class::bestImprovement(bool improvement_flag) {
 
     //ROS_WARN_STREAM("STARTING PLAN");
     std::cout << "STARTING PLAN\n";
@@ -31,7 +34,7 @@ void metaheuristic_class::bestImprovement(void) {
 
 		list_of_neighbors = generateListOfNeighbors(current_plan);
 		//printNeighborhood(list_of_neighbors);
-		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors);  	//note: pass the list of neighbours by reference or create a listOfNeighbours as an atribute
+		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors, improvement_flag, current_plan);  	//note: pass the list of neighbours by reference or create a listOfNeighbours as an atribute
 		//printNeighborhood(list_of_neighbors);
 
 		int min_time_neighbor = getMinPlanningTime(list_of_neighbors);
@@ -99,7 +102,7 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 	
 	for(int first_plan=0; first_plan < NUM_MISSIONS; first_plan++){
 		for(int second_plan = first_plan+1; second_plan < NUM_MISSIONS; second_plan++){
-			    std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
+			   // std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
 				neighbor n;
 				n.plan = swap1to1(inputNeighbor.plan, first_plan, second_plan);
 				n.plan_time = 11; //TODO: verify value
@@ -111,7 +114,7 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 	return list_of_neighbors;
 }
 
-std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list){
+std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list, bool improvement_flag,  neighbor inputNeighbor){
 	
 	//TODO: pass the list of neighbours by reference
 	//TODO: add incumbent pan time;
@@ -123,7 +126,10 @@ std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<nei
 	for (size_t i = 0; i < return_list.size(); i++) {
 		//get time of a plan
 		return_list[i].plan_time  =  getOfflinePlanningTime(return_list[i].plan);
-		
+		if (inputNeighbor.plan_time > return_list[i].plan_time && improvement_flag == FI_FLAG) {
+			//swop
+			break;
+		}
 		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
     }
 	

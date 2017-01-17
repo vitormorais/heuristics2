@@ -34,7 +34,7 @@ public:
 
 	metaheuristic_class(std::vector<planning> starting_plan);
 	~metaheuristic_class(void);
-    void bestImprovement(void);
+    void bestImprovement(bool improvement_flag);
 
 
 private:
@@ -45,7 +45,7 @@ private:
     void loadStartingPlan(std::vector<planning> starting_plan);
     std::vector<planning> swap1to1(std::vector<planning>, int first_position, int second_position);
 	std::vector<neighbor> generateListOfNeighbors( neighbor inputNeighbor);
-	std::vector<neighbor> updateTimeOfNeighbors(std::vector<neighbor> input_list);
+	std::vector<neighbor> updateTimeOfNeighbors(std::vector<neighbor> input_list, bool improvement_flag,  neighbor inputNeighbor);
 
 	float getOfflinePlanningTime(std::vector<planning> input_plan);
 	int getMinPlanningTime(std::vector<neighbor> input_list);
