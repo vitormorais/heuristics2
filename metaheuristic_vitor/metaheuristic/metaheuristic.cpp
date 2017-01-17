@@ -33,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     metaheuristic_class teastar_metaheuristic(starting_plan);
 
-    teastar_metaheuristic.bestImprovement(BI_FLAG);
+    teastar_metaheuristic.bestImprovement(FI_FLAG);
 
 
 	getchar();

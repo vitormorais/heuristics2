@@ -102,7 +102,7 @@ std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inp
 	
 	for(int first_plan=0; first_plan < NUM_MISSIONS; first_plan++){
 		for(int second_plan = first_plan+1; second_plan < NUM_MISSIONS; second_plan++){
-			   // std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
+			    std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
 				neighbor n;
 				n.plan = swap1to1(inputNeighbor.plan, first_plan, second_plan);
 				n.plan_time = 11; //TODO: verify value
@@ -128,6 +128,9 @@ std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<nei
 		return_list[i].plan_time  =  getOfflinePlanningTime(return_list[i].plan);
 		if (inputNeighbor.plan_time > return_list[i].plan_time && improvement_flag == FI_FLAG) {
 			//swop
+			for (size_t j = i+1; j < return_list.size(); j++){		//TODO: check if this is the best approach: identify the "smallest" and then put all times with the time of the current neighbor to avoid saving the time of the current neighbor outside the "BEST IMPROVEMENT method"
+				return_list[j].plan_time=inputNeighbor.plan_time;    
+			}
 			break;
 		}
 		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
