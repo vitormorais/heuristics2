@@ -1,7 +1,1 @@
-﻿  metaheuristic_class.cpp
-c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\metaheuristic_vitor\metaheuristic\metaheuristic_class.cpp(59): warning C4018: '>=' : signed/unsigned mismatch
-c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\metaheuristic_vitor\metaheuristic\metaheuristic_class.cpp(59): warning C4018: '>=' : signed/unsigned mismatch
-c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\metaheuristic_vitor\metaheuristic\metaheuristic_class.cpp(172): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\metaheuristic_vitor\metaheuristic\metaheuristic_class.cpp(181): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-c:\users\vitor\desktop\doutoramento\1st_semester\heuristics\2.dev2ndwork\heuristics2\metaheuristic_vitor\metaheuristic\metaheuristic_class.cpp(183): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
-  metaheuristic.vcxproj -> C:\Users\Vitor\Desktop\Doutoramento\1st_semester\Heuristics\2.dev2ndwork\heuristics2\metaheuristic_vitor\Debug\metaheuristic.exe
+﻿

@@ -54,7 +54,8 @@ private:
     void printPlan(std::vector<planning> input_plan);
 	void printNeighborhood(std::vector<neighbor> input_list_of_neighbors);
 
-	int simulated_iteration, simulated_temperature;
+	int auxGetExpon(int iter);
 
+	int simulated_iteration, simulated_temperature;
 
 };
