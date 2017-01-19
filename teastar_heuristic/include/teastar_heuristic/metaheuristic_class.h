@@ -7,6 +7,9 @@
 #define NUM_ROBOTS 5
 #define NUM_MISSIONS 9
 
+#define HAS_NEW_MIN true
+#define NOT_NEW_MIN false
+
 typedef struct{
     std::vector<planning> plan;
     float plan_time;
@@ -51,6 +54,7 @@ private:
 	int auxGetExpon(int iter);
 
 	int simulated_iteration, simulated_temperature;
+	bool new_minimum;
 
 };
 
@@ -78,7 +82,7 @@ void metaheuristic_class::bestImprovement(bool improvement_flag) {
    // std::vector<planning> plan_swapped;
 	std::vector<neighbor> list_of_neighbors;
 
-	for(int i=0; i<10; i++){
+	for(int i=0; i<100; i++){ //maximum iterations ("halting criterion")
 
 		list_of_neighbors = generateListOfNeighbors(current_plan);
 		//printNeighborhood(list_of_neighbors);
@@ -87,6 +91,11 @@ void metaheuristic_class::bestImprovement(bool improvement_flag) {
 
 		int min_time_neighbor = getMinPlanningTime(list_of_neighbors);
 
+		if(new_minimum == NOT_NEW_MIN)
+		{
+			std::cout<< "# Reached Local Minima #"<<std::endl;
+			break;
+		}
 		std::cout<< "# "<<i<<" minTime" <<min_time_neighbor<<std::endl;
 
 		current_plan = list_of_neighbors[min_time_neighbor];  //jumps to best neighbor
@@ -186,12 +195,14 @@ int metaheuristic_class::getMinPlanningTime(std::vector<neighbor> input_list){
 	//TODO: check if input list have plans  (?)
 	float min_time = input_list[0].plan_time;
 	int min_time_position = 0;
+	new_minimum = NOT_NEW_MIN;
 
 	for (size_t i = 0; i < input_list.size(); i++) {
 		//get time of a plan
 		if (input_list[i].plan_time < min_time ){
 			min_time = input_list[i].plan_time;
 			min_time_position = i;
+			new_minimum = HAS_NEW_MIN;
 		}
 		
 		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour

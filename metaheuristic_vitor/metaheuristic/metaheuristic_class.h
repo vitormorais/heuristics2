@@ -9,6 +9,9 @@
 #define NUM_ROBOTS 5
 #define NUM_MISSIONS 9
 
+#define HAS_NEW_MIN true
+#define NOT_NEW_MIN false
+
 typedef struct{
       int robot_id;
  	    int mission_id;
@@ -57,5 +60,6 @@ private:
 	int auxGetExpon(int iter);
 
 	int simulated_iteration, simulated_temperature;
+	bool new_minimum;
 
 };
