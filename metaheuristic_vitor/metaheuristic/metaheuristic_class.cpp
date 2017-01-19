@@ -189,7 +189,7 @@ int metaheuristic_class::auxGetExpon(int iter) {
 
 	
 	float auxExpon = iter*0.1;
-	auxExpon /= 25;  //var
+	auxExpon /= 55;  //var
 	auxExpon *= -1; //fixo
 
 				
@@ -206,8 +206,8 @@ void metaheuristic_class::simulatedAnnealing(void){
 
 
 	std::ofstream filetowrite;
-	filetowrite.open("..\\SIMUL_ANEALL.txt", std::ios_base::app);
-
+	filetowrite.open("..\\SIMUL_ANEALL4.txt", std::ios_base::app);
+	filetowrite << " ; #tests ; Tested time; Selected time; threshold" << std::endl;
 	simulated_iteration = 0;				//t <-- 0
 	simulated_temperature = 700;//700;			//initialize T
 	int eval_threshold;// = 700;
@@ -219,9 +219,9 @@ void metaheuristic_class::simulatedAnnealing(void){
 											//evaluate Vc
 	current_plan.plan_time =900;
 
-	while(simulated_iteration < 1000) {		//repeat
+	while(simulated_iteration < 2000) {		//repeat
 
-		//std::cout<<"cur_iter"<<simulated_iteration<<std::endl;
+
 		//for(int i=0; i<50; i++){				//repeat
 
 													//select a new point Vn
@@ -237,7 +237,7 @@ void metaheuristic_class::simulatedAnnealing(void){
 				//get time of a plan
 				list_of_neighbors[j].plan_time  =  getOfflinePlanningTime(list_of_neighbors[j].plan, simulated_iteration);  //está correto o 'i'
 				float aux=(current_plan.plan_time > list_of_neighbors[j].plan_time) ? list_of_neighbors[j].plan_time : current_plan.plan_time;
-				filetowrite << list_of_neighbors[j].plan_time << ";" << aux << std::endl;
+				filetowrite << simulated_iteration <<";"<<j<<";"<< list_of_neighbors[j].plan_time << ";" << aux << ";"<<auxGetExpon(simulated_iteration)<<std::endl;
 				if (current_plan.plan_time + auxGetExpon(simulated_iteration) > list_of_neighbors[j].plan_time ) {//&& FI_FLAG == FI_FLAG) {
 					//swop
 					//falta ir ao getminplanningtime....
@@ -267,7 +267,7 @@ void metaheuristic_class::simulatedAnnealing(void){
 
 	//	}									//until (termination-condition)
 	std::cout<<current_plan.plan_time<<std::endl;
-	simulated_temperature *= 0,95;				//T <-- g(T, t)
+	simulated_temperature *= 0,98;				//T <-- g(T, t)
 	simulated_iteration += 1;					//t <-- t+1
 
 
