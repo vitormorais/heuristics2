@@ -50,6 +50,7 @@ typedef struct{
 
 typedef struct{
     int robot_id;
+	int robot_vertex;
 	int mission_id;
     int mission_vertex;
 }planning;
@@ -547,7 +548,6 @@ int heuristic_class::getMaxResult(void) {
 	return maximum;
 }
 
-
 int heuristic_class::selectTime(void) {
 
 	int aux = initial_solution.l_min_time_miss_robot[selectedElement.mission];
@@ -611,8 +611,6 @@ std::vector<planning> heuristic_class::runHeuristic1(void) {
 	solutionInitialSetup();  //incluir aqui o TEA*
 	printSolutionTable();
 
-
-
 	while(getRemainingMissions() >= 1)
 	{
 
@@ -648,6 +646,7 @@ std::vector<planning> heuristic_class::runHeuristic1(void) {
 	{
 		planning p;
 		p.robot_id = it->robot;
+		p.robot_vertex = l_robots[it->robot].vertex;
 		p.mission_id = it->mission;
 		p.mission_vertex = l_missions[it->mission].vertex;
 
