@@ -1,6 +1,9 @@
 #include<ros/ros.h>
 #include "teastar_msgs/GetTEAstarPlanTime.h"
 #include "teastar_msgs/Mission.h"
+#include <algorithm>
+#include <math.h>
+#include <fstream>
 
 #define BI_FLAG true
 #define FI_FLAG false
@@ -31,6 +34,7 @@ public:
 	~metaheuristic_class(void);
     void setupConfigurationFromParameterServer(ros::NodeHandlePtr& node_handle);
     void bestImprovement(bool improvement_flag);
+    void simulatedAnnealing(void);
 
 private:
 
@@ -52,6 +56,8 @@ private:
 
     int simulated_iteration, simulated_temperature;
     bool new_minimum_;
+
+    float auxGetExpon(int iter);
 
 };
 
@@ -255,5 +261,118 @@ float metaheuristic_class::getOnlinePlanningTime(std::vector<planning> input_pla
         ROS_ERROR_STREAM("[TEA* MetaHeuristic] Failed to call service get_teastar_plan_time");
         return -1;
     }
+
+}
+
+float metaheuristic_class::auxGetExpon(int iter) {
+
+
+	float auxExpon = iter*0.1;
+	auxExpon /= 0.5;  //var
+	auxExpon *= -1; //fixo
+
+
+	double minValue;
+	minValue = expf(auxExpon);
+	minValue *= (105);
+	minValue += -1;
+
+	minValue *= 1.5;
+
+    if (minValue < 0) {
+        return 0.0;
+    }
+    else {
+        return minValue;
+    }
+}
+
+void metaheuristic_class::simulatedAnnealing(void) {
+
+
+    ROS_WARN_STREAM("[]");
+
+	std::ofstream filetowrite;
+	filetowrite.open("SIMUL_ANEALL4.csv", std::ios_base::app);
+	filetowrite << " ; #tests ; Tested time; Selected time; threshold" << std::endl;
+
+	simulated_iteration = 0;				//t <-- 0
+	// simulated_temperature = 700;            //initialize T
+	int eval_threshold;                     // = 700;
+
+	//select a current point Vc at random
+	printPlan(this->starting_plan_);
+
+    neighbor current_plan;
+	current_plan.plan = this->starting_plan_;
+    current_plan.plan_time = getOnlinePlanningTime(this->starting_plan_); //evaluate Vc
+
+    std::vector<neighbor> list_of_neighbors;
+
+
+	while(simulated_iteration < 70) {
+
+			list_of_neighbors = generateListOfNeighbors(current_plan);
+
+			for (size_t j = 0; j < list_of_neighbors.size(); j++) {
+
+                // Get time of a Neighborhood
+				list_of_neighbors[j].plan_time = getOnlinePlanningTime(list_of_neighbors[j].plan);
+
+                // float aux=(current_plan.plan_time > list_of_neighbors[j].plan_time) ? list_of_neighbors[j].plan_time : current_plan.plan_time;
+                filetowrite << simulated_iteration <<";"<<j<<";"<< list_of_neighbors[j].plan_time << ";" << current_plan.plan_time << ";"<<auxGetExpon(simulated_iteration)<<std::endl;
+
+                // If a "minimum" is found
+				if (current_plan.plan_time > list_of_neighbors[j].plan_time ) {
+
+                    current_plan = list_of_neighbors[j];
+					break;
+				}
+
+                // Did not found any "minimum"
+    			else if (j >= list_of_neighbors.size() - 1) {
+
+					// eval_threshold = simulated_temperature; // TODO: This should be an exponential function
+
+
+                    std::vector<int> list_of_neighbors_shuffled;
+
+                    // set some values:
+                    for (int i=0; i<list_of_neighbors.size()-1; i++) list_of_neighbors_shuffled.push_back(i);
+
+                    // using built-in random generator:
+                    std::random_shuffle ( list_of_neighbors_shuffled.begin(), list_of_neighbors_shuffled.end() );
+
+                    for (std::vector<int>::iterator it=list_of_neighbors_shuffled.begin(); it!=list_of_neighbors_shuffled.end(); ++it) {
+                    // for (size_t l = 0; l < list_of_neighbors.size(); l++){
+
+                        int l = *it;
+
+						if (current_plan.plan_time + auxGetExpon(simulated_iteration) > list_of_neighbors[l].plan_time) {
+
+							current_plan = list_of_neighbors[l];
+							break;
+						}
+
+                        // TODO: Else... ?
+                        else if ( std::distance( it, list_of_neighbors_shuffled.end() ) == 1 ) {
+                            ROS_ERROR_STREAM("ERROR!!!!");
+                            simulated_iteration = 100000;
+                            break;
+                        }
+
+					}
+
+                    break;
+				}
+			} //until (termination-condition)
+
+        ROS_INFO_STREAM("[TEA* MetaHeuristic] [Simulated Annealing] Iteration #" << simulated_iteration << " Current Plan Time: " << current_plan.plan_time << " Current Temperature: " << auxGetExpon(simulated_iteration));
+
+    	// simulated_temperature *= 0,98;	//T <-- g(T, t)
+    	simulated_iteration += 1;		//t <-- t+1
+
+
+	} //until (halting criterion)
 
 }

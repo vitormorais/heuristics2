@@ -619,8 +619,8 @@ std::vector<planning> heuristic_class::runHeuristic1(void) {
 		updateMinimumTime();
 		updateMaximumTime();
 
-		std::cout <<"\nMinimum time:"<< getMinimumOfMinimum(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
-		// std::cout <<"\nMaximum time:"<< getMaximumOfMinimum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
+		// std::cout <<"\nMinimum time:"<< getMinimumOfMinimum(); //for H1: obtem primeiro o minimo do conjunto dos m�nimos
+		std::cout <<"\nMaximum time:"<< getMaximumOfMinimum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
 
 		//std::cout <<"\nMinimum of maximum time:"<< getMinimumOfMaximum(); //for H2: obtem primeiro o m�ximo do conjunto dos m�nimos
 		//std::cout <<"\nMaximum of maximum time:"<< getMaximumOfMaximum();

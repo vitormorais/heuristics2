@@ -31,14 +31,8 @@ int main(int argc, char **argv)
 
     teastar_metaheuristic.setupConfigurationFromParameterServer(node_handle);
 
-    teastar_metaheuristic.bestImprovement(BI_FLAG);
-    //teastar_metaheuristic.simulatedAnnealing();
-
-    // teastar_metaheuristic.getOnlinePlanningTime(starting_plan);
-
-
-
-    // ROS_INFO_STREAM("[TEA* Heuristic] [AGV " << agv <<"] Time between Vertex " << vertex_origin << " and Vertex " << vertex_end << ": " << sum_time);
+    // teastar_metaheuristic.bestImprovement(FI_FLAG);
+    teastar_metaheuristic.simulatedAnnealing();
 
   return 0;
 }
