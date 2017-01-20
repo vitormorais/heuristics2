@@ -2,6 +2,12 @@
 #include "teastar_msgs/GetTEAstarPlanTime.h"
 #include "teastar_msgs/Mission.h"
 
+#define BI_FLAG true
+#define FI_FLAG false
+
+#define HAS_NEW_MIN true
+#define NOT_NEW_MIN false
+
 typedef struct{
     std::vector<planning> plan;
     float plan_time;
@@ -24,9 +30,7 @@ public:
 	metaheuristic_class(std::vector<planning> starting_plan);
 	~metaheuristic_class(void);
     void setupConfigurationFromParameterServer(ros::NodeHandlePtr& node_handle);
-    void bestImprovement(void);
-    float getOnlinePlanningTime(std::vector<planning> input_plan);
-
+    void bestImprovement(bool improvement_flag);
 
 private:
 
@@ -40,6 +44,14 @@ private:
     std::vector<planning> swap1to1(std::vector<planning>, int first_position, int second_position);
     void printPlan(std::vector<planning> input_plan);
 
+    std::vector<neighbor> generateListOfNeighbors( neighbor inputNeighbor);
+    std::vector<neighbor> updateTimeOfNeighbors(std::vector<neighbor> input_list, bool improvement_flag,  neighbor inputNeighbor, int current_iteration);
+    int getMinPlanningTime(std::vector<neighbor> input_list, neighbor incumbent_solution);
+
+    float getOnlinePlanningTime(std::vector<planning> input_plan);
+
+    int simulated_iteration, simulated_temperature;
+    bool new_minimum_;
 
 };
 
@@ -66,18 +78,114 @@ void metaheuristic_class::setupConfigurationFromParameterServer(ros::NodeHandleP
 
 void metaheuristic_class::loadStartingPlan(std::vector<planning> starting_plan) { this->starting_plan_ = starting_plan; }
 
-void metaheuristic_class::bestImprovement(void) {
+void metaheuristic_class::bestImprovement(bool improvement_flag) {
 
-    ROS_WARN_STREAM("STARTING PLAN");
-    printPlan(this->starting_plan_);
+    ROS_WARN_STREAM("[TEA* MetaHeuristic] [BI/FI] STARTING PLAN");
+    // std::cout << "STARTING PLAN\n";
 
-    std::vector<planning> plan_swapped;
+	// printPlan(this->starting_plan_);
 
-    plan_swapped = swap1to1(this->starting_plan_, 8, 9);
+	neighbor current_plan;
+	current_plan.plan = this->starting_plan_;
+	current_plan.plan_time = getOnlinePlanningTime(this->starting_plan_);
 
-    ROS_WARN_STREAM("SWAPPED PLAN");
-    printPlan(plan_swapped);
+    ROS_WARN_STREAM("[TEA* MetaHeuristic] [BI/FI] Starting Plan Time: " << current_plan.plan_time);
 
+   // std::vector<planning> plan_swapped;
+	std::vector<neighbor> list_of_neighbors;
+
+	for(int i=0; i<10; i++){ //maximum iterations ("halting criterion")
+
+		list_of_neighbors = generateListOfNeighbors(current_plan);
+		//printNeighborhood(list_of_neighbors);
+		list_of_neighbors = updateTimeOfNeighbors(list_of_neighbors, improvement_flag, current_plan, i);
+		//printNeighborhood(list_of_neighbors);
+
+		int min_time_neighbor = getMinPlanningTime(list_of_neighbors, current_plan);
+
+		if(this->new_minimum_ == NOT_NEW_MIN)
+		{
+			ROS_ERROR_STREAM("[TEA* MetaHeuristic] [BI/FI] # REACHED LOCAL MINIMA # ");
+			break;
+		}
+
+		current_plan = list_of_neighbors[min_time_neighbor];  //jumps to best neighbor
+
+        ROS_WARN_STREAM("[TEA* MetaHeuristic] [BI/FI] Iteration # " << i << " Minimum Time " << current_plan.plan_time << " at Position " << min_time_neighbor);
+	}
+
+	printPlan(current_plan.plan);
+}
+
+
+std::vector<neighbor> metaheuristic_class::generateListOfNeighbors( neighbor inputNeighbor){
+
+	std::vector<neighbor> list_of_neighbors;
+
+	for(int first_plan=0; first_plan < NUM_MISSIONS; first_plan++){
+		for(int second_plan = first_plan+1; second_plan < NUM_MISSIONS; second_plan++){
+			    //std::cout << "swapping "<<first_plan<<" with "<<second_plan<<"\n";
+				neighbor n;
+				n.plan = swap1to1(inputNeighbor.plan, first_plan, second_plan);
+				n.plan_time = 11; //TODO: verify value
+				//printPlan(n2.plan);
+				list_of_neighbors.push_back(n);
+		}
+	}
+	//list_of_neighbors.push_back(n2);
+	return list_of_neighbors;
+}
+
+std::vector<neighbor> metaheuristic_class::updateTimeOfNeighbors(std::vector<neighbor> input_list, bool improvement_flag,  neighbor inputNeighbor, int current_iteration){
+
+	//TODO: pass the list of neighbours by reference
+	//TODO: add incumbent pan time;
+	//TODO: add flag for first improvement
+
+	std::vector<neighbor> return_list;
+	return_list = input_list;
+
+	for (size_t i = 0; i < return_list.size(); i++) {
+		//get time of a plan
+		return_list[i].plan_time  =  getOnlinePlanningTime(return_list[i].plan);
+		if (inputNeighbor.plan_time > return_list[i].plan_time && improvement_flag == FI_FLAG) {
+			//swop
+			for (size_t j = i+1; j < return_list.size(); j++){		//TODO: check if this is the best approach: identify the "smallest" and then put all times with the time of the current neighbor to avoid saving the time of the current neighbor outside the "BEST IMPROVEMENT method"
+				return_list[j].plan_time=inputNeighbor.plan_time;
+			}
+			break;
+		}
+		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
+    }
+
+	return return_list;
+}
+
+int metaheuristic_class::getMinPlanningTime(std::vector<neighbor> input_list, neighbor incumbent_solution){
+
+	//TODO: check if input list have plans  (?)
+	float min_time = incumbent_solution.plan_time;
+	int min_time_position = 0;
+	this->new_minimum_ = NOT_NEW_MIN;
+
+	for (size_t i = 0; i < input_list.size(); i++) {
+
+        ROS_WARN_STREAM(i);
+
+		//get time of a plan
+		if (input_list[i].plan_time < min_time ){
+
+            ROS_ERROR_STREAM(i);
+
+			min_time = input_list[i].plan_time;
+			min_time_position = i;
+			this->new_minimum_ = HAS_NEW_MIN;
+		}
+
+		//for first improvement, if plan time is lower that a memory variable, then preak and jumps to that neighbour
+    }
+
+	return min_time_position;
 }
 
 std::vector<planning> metaheuristic_class::swap1to1(std::vector<planning> input_plan, int fp, int sp) {

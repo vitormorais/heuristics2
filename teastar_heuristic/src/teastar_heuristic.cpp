@@ -31,9 +31,10 @@ int main(int argc, char **argv)
 
     teastar_metaheuristic.setupConfigurationFromParameterServer(node_handle);
 
-    // teastar_metaheuristic.bestImprovement();
+    teastar_metaheuristic.bestImprovement(BI_FLAG);
+    //teastar_metaheuristic.simulatedAnnealing();
 
-    teastar_metaheuristic.getOnlinePlanningTime(starting_plan);
+    // teastar_metaheuristic.getOnlinePlanningTime(starting_plan);
 
 
 
