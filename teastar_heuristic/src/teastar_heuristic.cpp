@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
     teastar_metaheuristic.setupConfigurationFromParameterServer(node_handle);
 
-    // teastar_metaheuristic.bestImprovement(FI_FLAG);
+    // teastar_metaheuristic.bestImprovement(BI_FLAG);
     teastar_metaheuristic.simulatedAnnealing();
 
   return 0;

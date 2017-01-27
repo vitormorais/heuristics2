@@ -3,7 +3,7 @@
 
 // TODO: This cannot be declared as such. ////
 #define NUM_ROBOTS 5
-#define NUM_MISSIONS 9
+#define NUM_MISSIONS 13
 
 #define SELECTABLE false
 #define SELECTED true
@@ -195,11 +195,21 @@ void heuristic_class::initializeListOfRobots(void) {
     r4.id = 4;
     r4.vertex = 119;
 
+	robot r5;
+    r5.id = 5;
+    r5.vertex = 251;
+
+	robot r6;
+	r6.id = 6;
+	r6.vertex = 263;
+
     l_robots.push_back(r0);
     l_robots.push_back(r1);
     l_robots.push_back(r2);
     l_robots.push_back(r3);
     l_robots.push_back(r4);
+	// l_robots.push_back(r5);
+	// l_robots.push_back(r6);
 
 }
 
@@ -241,6 +251,22 @@ void heuristic_class::initializeListOfMissions(void) {
     m8.id = 8;
     m8.vertex = 747;
 
+	mission m9;
+	m9.id = 9;
+	m9.vertex = 293;
+
+	mission m10;
+	m10.id = 10;
+	m10.vertex = 305;
+
+	mission m11;
+	m11.id = 11;
+	m11.vertex = 846;
+
+	mission m12;
+	m12.id = 12;
+	m12.vertex = 663;
+
     l_missions.push_back(m0);
     l_missions.push_back(m1);
     l_missions.push_back(m2);
@@ -250,6 +276,11 @@ void heuristic_class::initializeListOfMissions(void) {
     l_missions.push_back(m6);
     l_missions.push_back(m7);
     l_missions.push_back(m8);
+	l_missions.push_back(m9);
+	l_missions.push_back(m10);
+	l_missions.push_back(m11);
+	l_missions.push_back(m12);
+
 
 }
 
